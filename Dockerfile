@@ -34,7 +34,7 @@ WORKDIR /
 
 
 # Install bully
-RUN git clone https://github.com/aanarchyy/bully
+RUN git clone https://github.com/nu11secur1ty/w1f1t-kal1.git
 WORKDIR /bully/src/
 RUN make
 RUN make install

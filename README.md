@@ -1,7 +1,7 @@
 Wifite
 ======
 
-This repo is a complete re-write of [`wifite`](https://github.com/derv82/wifite), a Python script for auditing wireless networks.
+This repo is a complete re-write of [`wifite`](https://github.com/derv82/wifite) and developed by[`nu11secur1ty`](https://github.com/nu11secur1ty/w1f1t-kal1), a Python script for auditing wireless networks.
 
 Wifite runs existing wireless-auditing tools for you. Stop memorizing command arguments & switches!
 
