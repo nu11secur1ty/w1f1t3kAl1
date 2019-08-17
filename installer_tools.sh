@@ -6,12 +6,14 @@ cd curl-7.65.3/
 		make
 		make test
 	make install
-
+	sleep 3;
+git clone https://github.com/ZerBea/hcxdumptool.git
 cd hcxdumptool
 make 
 make install
 	sleep 3;
-cd ../hcxtools
+	git clone https://github.com/ZerBea/hcxtools.git
+cd hcxtools
 	make 
 	make install
 	exit 0;
