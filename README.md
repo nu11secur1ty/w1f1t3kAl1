@@ -3,32 +3,32 @@ w1fit3kAl1
 
 This repo is a complete re-write of [`wifite`](https://github.com/derv82/wifite) and developed by[`nu11secur1ty`](https://github.com/nu11secur1ty/w1f1tEkali1), a Python script for auditing wireless networks.
 
-Wifite runs existing wireless-auditing tools for you. Stop memorizing command arguments & switches!
+w1fit3kAl1 runs existing wireless-auditing tools for you. Stop memorizing command arguments & switches!
 
-Wifite is designed to use all known methods for retrieving the password of a wireless access point (router).  These methods include:
+w1fit3kAl1 is designed to use all known methods for retrieving the password of a wireless access point (router).  These methods include:
 1. WPS: The [Offline Pixie-Dust attack](https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup#Offline_brute-force_attack)
 1. WPS: The [Online Brute-Force PIN attack](https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup#Online_brute-force_attack)
 2. WPA: The [WPA Handshake Capture](https://hashcat.net/forum/thread-7717.html) + offline crack.
 3. WPA: The [PMKID Hash Capture](https://hashcat.net/forum/thread-7717.html) + offline crack.
 4. WEP: Various known attacks against WEP, including *fragmentation*, *chop-chop*, *aireplay*, etc.
 
-Run wifite, select your targets, and Wifite will automatically start trying to capture or crack the password.
+Run w1fit3kAl1, select your targets, and w1fit3kAl1 will automatically start trying to capture or crack the password.
 
 Supported Operating Systems
 ---------------------------
-Wifite is designed specifically for the latest version of [**Kali** Linux](https://www.kali.org/). [ParrotSec](https://www.parrotsec.org/) is also supported.
+w1fit3kAl1 is designed specifically for the latest version of [**Kali** Linux](https://www.kali.org/). [ParrotSec](https://www.parrotsec.org/) is also supported.
 
-Other pen-testing distributions (such as BackBox or Ubuntu) have outdated versions of the tools used by Wifite. Do not expect support unless you are using the latest versions of the *Required Tools*, and also [patched wireless drivers that support injection]().
+Other pen-testing distributions (such as BackBox or Ubuntu) have outdated versions of the tools used by w1fit3kAl1. Do not expect support unless you are using the latest versions of the *Required Tools*, and also [patched wireless drivers that support injection]().
 
 Required Tools
 --------------
 First and foremost, you will need a wireless card capable of "Monitor Mode" and packet injection (see [this tutorial for checking if your wireless card is compatible](http://www.aircrack-ng.org/doku.php?id=compatible_cards) and also [this guide](https://en.wikipedia.org/wiki/Wi-Fi_Protected_Setup#Offline_brute-force_attack)). There are many cheap wireless cards that plug into USB available from online stores.
 
-Second, only the latest versions of these programs are supported and must be installed for Wifite to work properly:
+Second, only the latest versions of these programs are supported and must be installed for w1fit3kAl1 to work properly:
 
 **Required:**
 
-* `python`: Wifite is compatible with both `python2` and `python3`.
+* `python`: w1fit3kAl1 is compatible with both `python2` and `python3`.
 * [`iwconfig`](https://wiki.debian.org/iwconfig): For identifying wireless devices already in Monitor Mode.
 * [`ifconfig`](https://en.wikipedia.org/wiki/Ifconfig): For starting/stopping wireless devices.
 * [`Aircrack-ng`](http://aircrack-ng.org/) suite, includes:
