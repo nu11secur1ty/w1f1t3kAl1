@@ -53,7 +53,7 @@ Second, only the latest versions of these programs are supported and must be ins
    * [`hcxpcaptool`](https://github.com/ZerBea/hcxtools): For converting PMKID packet captures into `hashcat`'s format.
 
 
-Run Wifite
+Run w1fit#k@l1
 ----------
 ```
 git clone https://github.com/nu11secur1ty/w1f1tEkal1.git
@@ -61,7 +61,7 @@ cd w1f1tEkal1
 sudo ./w1fit#k@l1.py
 ```
 
-Install Wifite
+Install w1fit#k@l1
 --------------
 To install onto your computer (so you can just run `wifite` from any terminal), run:
 
