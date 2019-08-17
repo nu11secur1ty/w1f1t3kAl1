@@ -63,13 +63,13 @@ sudo ./w1fit#k@l1.py
 
 Install w1fit#k@l1
 --------------
-To install onto your computer (so you can just run `wifite` from any terminal), run:
+To install onto your computer (so you can just run `w1fit#k@l1` from any terminal), run:
 
 ```bash
 sudo python setup.py install
 ```
 
-This will install `wifite` to `/usr/sbin/wifite` which should be in your terminal path.
+This will install `w1fit#k@l1` to `/usr/sbin/w1fit#k@l1` which should be in your terminal path.
 
 **Note:** Uninstalling is [not as easy](https://stackoverflow.com/questions/1550226/python-setup-py-uninstall#1550235). The only way to uninstall is to record the files installed by the above command and *remove* those files:
 
@@ -101,7 +101,7 @@ What's new?
 Comparing this repo to the "old wifite" @ https://github.com/nu11secur1ty/w1f1tEkal1
 
 * **Less bugs**
-   * Cleaner process management. Does not leave processes running in the background (the old `wifite` was bad about this).
+   * Cleaner process management. Does not leave processes running in the background (the old `w1fit#k@l1` was bad about this).
    * No longer "one monolithic script". Has working unit tests. Pull requests are less-painful!
 * **Speed**
    * Target access points are refreshed every second instead of every 5 seconds.
