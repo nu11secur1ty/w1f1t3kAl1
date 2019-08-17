@@ -1,18 +1,18 @@
-16:58:18.784000 signalled to die
-16:58:18.784164 ========> IPv4 sws (port 8990 pid: 30421) exits with signal (15)
-16:58:23.818569 Running HTTP IPv4 version on port 8990
-16:58:23.818887 Wrote pid 30495 to .http_server.pid
-16:58:24.831323 ====> Client connect
-16:58:24.831389 accept_connection 3 returned 4
-16:58:24.831444 accept_connection 3 returned 0
-16:58:24.831507 Read 92 bytes
-16:58:24.831548 Process 92 bytes request
-16:58:24.831605 Got request: GET /verifiedserver HTTP/1.1
-16:58:24.831649 Are-we-friendly question received
-16:58:24.831722 Wrote request (92 bytes) input to log/server.input
-16:58:24.831792 Identifying ourselves as friends
-16:58:24.831982 Response sent (56 bytes) and written to log/server.response
-16:58:24.832030 special request received, no persistency
-16:58:24.832059 ====> Client disconnect 0
-16:58:30.836335 signalled to die
-16:58:30.836512 ========> IPv4 sws (port 8990 pid: 30495) exits with signal (15)
+08:46:55.813483 signalled to die
+08:46:55.813599 ========> IPv4 sws (port 8990 pid: 2877) exits with signal (15)
+08:47:00.849507 Running HTTP IPv4 version on port 8990
+08:47:00.849723 Wrote pid 2988 to .http_server.pid
+08:47:01.859671 ====> Client connect
+08:47:01.859731 accept_connection 3 returned 4
+08:47:01.859768 accept_connection 3 returned 0
+08:47:01.859805 Read 92 bytes
+08:47:01.859832 Process 92 bytes request
+08:47:01.859871 Got request: GET /verifiedserver HTTP/1.1
+08:47:01.859896 Are-we-friendly question received
+08:47:01.859946 Wrote request (92 bytes) input to log/server.input
+08:47:01.859996 Identifying ourselves as friends
+08:47:01.860133 Response sent (55 bytes) and written to log/server.response
+08:47:01.860164 special request received, no persistency
+08:47:01.860187 ====> Client disconnect 0
+08:47:07.864146 signalled to die
+08:47:07.864325 ========> IPv4 sws (port 8990 pid: 2988) exits with signal (15)

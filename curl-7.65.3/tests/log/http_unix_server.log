@@ -1,3 +1,3 @@
-16:58:35.867710 unlink(http.sock) = 0 (Success)
-16:58:35.867789 signalled to die
-16:58:35.867895 ========> unix sws (http.sock pid: 28044) exits with signal (15)
+08:47:11.889223 unlink(http.sock) = 0 (Success)
+08:47:11.889300 signalled to die
+08:47:11.889376 ========> unix sws (http.sock pid: 32194) exits with signal (15)

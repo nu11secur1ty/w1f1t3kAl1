@@ -27,6 +27,7 @@ uname -v = #1 SMP Debian 4.19.37-6kali1 (2019-07-22)
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
 
+PATH: /opt/3PAR/inform_mgmt_console/bin
 PATH: /usr/local/sbin
 PATH: /usr/local/bin
 PATH: /usr/sbin
@@ -310,7 +311,7 @@ configure:6473: $? = 0
 configure:6552: gcc -o conftest    conftest.c  >&5
 configure:6552: $? = 0
 configure:6631: gcc -o conftest    conftest.c  >&5
-/usr/bin/ld: /tmp/ccSBzUKF.o: in function `main':
+/usr/bin/ld: /tmp/cc12vBPV.o: in function `main':
 conftest.c:(.text+0xa): undefined reference to `inet_ntoa_r'
 collect2: error: ld returned 1 exit status
 configure:6631: $? = 1
@@ -2550,7 +2551,7 @@ configure:19567: checking for openssl/err.h
 configure:19567: result: yes
 configure:19624: checking for RAND_egd
 configure:19624: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/ccmBY7pb.o: in function `main':
+/usr/bin/ld: /tmp/cc9auaYo.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `RAND_egd'
 collect2: error: ld returned 1 exit status
 configure:19624: $? = 1
@@ -2627,7 +2628,7 @@ configure: failed program was:
 configure:19624: result: no
 configure:19624: checking for SSLv2_client_method
 configure:19624: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/cc0eHfCn.o: in function `main':
+/usr/bin/ld: /tmp/ccZnoD6x.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `SSLv2_client_method'
 collect2: error: ld returned 1 exit status
 configure:19624: $? = 1
@@ -2873,7 +2874,7 @@ configure:22261: checking whether to use builtin CA store of SSL library
 configure:22275: result: no
 configure:22300: checking for library containing psl_builtin
 configure:22328: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/cc24h2s0.o: in function `main':
+/usr/bin/ld: /tmp/ccw2FRi8.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `psl_builtin'
 collect2: error: ld returned 1 exit status
 configure:22328: $? = 1
@@ -42650,7 +42651,7 @@ configure:31604: checking for arpa/inet.h
 configure:31604: result: yes
 configure:31624: checking if inet_ntoa_r can be linked
 configure:31653: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/ccZoEq0Z.o: in function `main':
+/usr/bin/ld: /tmp/ccRjpMdX.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `inet_ntoa_r'
 collect2: error: ld returned 1 exit status
 configure:31653: $? = 1
@@ -43235,7 +43236,7 @@ configure:32778: checking if ioctlsocket might be used
 configure:32868: result: no
 configure:32880: checking if IoctlSocket can be linked
 configure:32909: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/ccJZ4Fuq.o: in function `main':
+/usr/bin/ld: /tmp/ccfI86co.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `IoctlSocket'
 collect2: error: ld returned 1 exit status
 configure:32909: $? = 1
@@ -43866,7 +43867,7 @@ configure:34423: checking for setjmp.h
 configure:34423: result: yes
 configure:34443: checking if sigsetjmp can be linked
 configure:34472: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/ccioBNuK.o: in function `main':
+/usr/bin/ld: /tmp/ccEAWuZR.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `sigsetjmp'
 collect2: error: ld returned 1 exit status
 configure:34472: $? = 1
@@ -44179,7 +44180,7 @@ configure:35054: checking if strcasecmp might be used
 configure:35060: result: yes
 configure:35081: checking if strcmpi can be linked
 configure:35110: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/cc6MtGhM.o: in function `main':
+/usr/bin/ld: /tmp/ccqKRfoL.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `strcmpi'
 collect2: error: ld returned 1 exit status
 configure:35110: $? = 1
@@ -45282,7 +45283,7 @@ configure:35738: checking if strerror_r might be used
 configure:35744: result: yes
 configure:35801: checking if stricmp can be linked
 configure:35830: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/ccT0y13y.o: in function `main':
+/usr/bin/ld: /tmp/ccz6cctz.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `stricmp'
 collect2: error: ld returned 1 exit status
 configure:35830: $? = 1
@@ -45565,7 +45566,7 @@ configure:36072: checking if strncasecmp might be used
 configure:36078: result: yes
 configure:36099: checking if strncmpi can be linked
 configure:36128: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/ccKBWWtN.o: in function `main':
+/usr/bin/ld: /tmp/cc8P5X4T.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `strncmpi'
 collect2: error: ld returned 1 exit status
 configure:36128: $? = 1
@@ -45832,7 +45833,7 @@ configure:36221: checking if strncmpi might be used
 configure:36236: result: no
 configure:36248: checking if strnicmp can be linked
 configure:36277: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/cc0KNn0X.o: in function `main':
+/usr/bin/ld: /tmp/cc7MTsyb.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `strnicmp'
 collect2: error: ld returned 1 exit status
 configure:36277: $? = 1
@@ -46174,7 +46175,7 @@ configure:37062: $? = 0
 configure:37062: result: yes
 configure:37062: checking for getpass_r
 configure:37062: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/ccWPqiQf.o: in function `main':
+/usr/bin/ld: /tmp/cc0b1BpJ.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `getpass_r'
 collect2: error: ld returned 1 exit status
 configure:37062: $? = 1
@@ -46734,7 +46735,7 @@ configure:37062: $? = 0
 configure:37062: result: yes
 configure:37062: checking for mach_absolute_time
 configure:37062: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/ccZ4EKgh.o: in function `main':
+/usr/bin/ld: /tmp/ccYzJIjT.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `mach_absolute_time'
 collect2: error: ld returned 1 exit status
 configure:37062: $? = 1
@@ -47290,7 +47291,7 @@ configure:37062: $? = 0
 configure:37062: result: yes
 configure:37062: checking for setmode
 configure:37062: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/ccYYtboN.o: in function `main':
+/usr/bin/ld: /tmp/ccVrj6Cr.o: in function `main':
 conftest.c:(.text.startup+0x7): undefined reference to `setmode'
 collect2: error: ld returned 1 exit status
 configure:37062: $? = 1
@@ -47880,7 +47881,7 @@ configure:37769: checking for pthread.h
 configure:37769: result: yes
 configure:37776: checking for pthread_create
 configure:37776: gcc -o conftest -Werror-implicit-function-declaration -O2 -Wno-system-headers       conftest.c -lssl -lcrypto -lssl -lcrypto -lz  >&5
-/usr/bin/ld: /tmp/ccrf6t8K.o: undefined reference to symbol 'pthread_create@@GLIBC_2.2.5'
+/usr/bin/ld: /tmp/cc8dWS3j.o: undefined reference to symbol 'pthread_create@@GLIBC_2.2.5'
 /usr/bin/ld: /lib/x86_64-linux-gnu/libpthread.so.0: error adding symbols: DSO missing from command line
 collect2: error: ld returned 1 exit status
 configure:37776: $? = 1
@@ -48247,18 +48248,25 @@ config.status:1458: creating packages/vms/Makefile
 config.status:1458: creating curl-config
 config.status:1458: creating libcurl.pc
 config.status:1458: creating lib/curl_config.h
+config.status:1639: lib/curl_config.h is unchanged
 config.status:1687: executing depfiles commands
 config.status:1764: cd docs/examples       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+make: Nothing to be done for 'am--depfiles'.
 config.status:1769: $? = 0
 config.status:1764: cd src       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+make: Nothing to be done for 'am--depfiles'.
 config.status:1769: $? = 0
 config.status:1764: cd lib       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+make: Nothing to be done for 'am--depfiles'.
 config.status:1769: $? = 0
 config.status:1764: cd tests/server       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+make: Nothing to be done for 'am--depfiles'.
 config.status:1769: $? = 0
 config.status:1764: cd tests/libtest       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+make: Nothing to be done for 'am--depfiles'.
 config.status:1769: $? = 0
 config.status:1764: cd tests/unit       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+make: Nothing to be done for 'am--depfiles'.
 config.status:1769: $? = 0
 config.status:1687: executing libtool commands
 configure:41276: amending lib/Makefile
@@ -48617,7 +48625,7 @@ lt_cv_truncate_bin='/usr/bin/dd bs=4096 count=1'
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} /opt/GIT/w1f1t-kal1/curl-7.65.3/missing aclocal-1.16'
+ACLOCAL='${SHELL} /opt/GIT/w1f1tEkal1/curl-7.65.3/missing aclocal-1.16'
 AMDEPBACKSLASH='\'
 AMDEP_FALSE='#'
 AMDEP_TRUE=''
@@ -48629,9 +48637,9 @@ AM_V='$(V)'
 AR='/usr/bin/ar'
 AR_FLAGS='cr'
 AS='as'
-AUTOCONF='${SHELL} /opt/GIT/w1f1t-kal1/curl-7.65.3/missing autoconf'
-AUTOHEADER='${SHELL} /opt/GIT/w1f1t-kal1/curl-7.65.3/missing autoheader'
-AUTOMAKE='${SHELL} /opt/GIT/w1f1t-kal1/curl-7.65.3/missing automake-1.16'
+AUTOCONF='${SHELL} /opt/GIT/w1f1tEkal1/curl-7.65.3/missing autoconf'
+AUTOHEADER='${SHELL} /opt/GIT/w1f1tEkal1/curl-7.65.3/missing autoheader'
+AUTOMAKE='${SHELL} /opt/GIT/w1f1tEkal1/curl-7.65.3/missing automake-1.16'
 AWK='gawk'
 BLANK_AT_MAKETIME=''
 BUILD_LIBHOSTNAME_FALSE='#'
@@ -48735,7 +48743,7 @@ LT_SYS_LIBRARY_PATH=''
 MAINT='#'
 MAINTAINER_MODE_FALSE=''
 MAINTAINER_MODE_TRUE='#'
-MAKEINFO='${SHELL} /opt/GIT/w1f1t-kal1/curl-7.65.3/missing makeinfo'
+MAKEINFO='${SHELL} /opt/GIT/w1f1tEkal1/curl-7.65.3/missing makeinfo'
 MANIFEST_TOOL=':'
 MANOPT='-man'
 MKDIR_P='/usr/bin/mkdir -p'
@@ -48835,7 +48843,7 @@ host_vendor='pc'
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='${SHELL} /opt/GIT/w1f1t-kal1/curl-7.65.3/install-sh'
+install_sh='${SHELL} /opt/GIT/w1f1tEkal1/curl-7.65.3/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 libext='a'

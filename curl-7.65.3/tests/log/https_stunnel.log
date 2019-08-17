@@ -3,7 +3,7 @@
 [.] Compiled/running with OpenSSL 1.1.1c  28 May 2019
 [.] Threading:PTHREAD Sockets:POLL,IPv6,SYSTEMD TLS:ENGINE,FIPS,OCSP,PSK,SNI Auth:LIBWRAP
 [ ] errno: (*__errno_location ())
-[.] Reading configuration from file /opt/GIT/w1f1t-kal1/curl-7.65.3/tests/https_stunnel.conf
+[.] Reading configuration from file /opt/GIT/w1f1tEkal1/curl-7.65.3/tests/https_stunnel.conf
 [.] UTF-8 byte order mark not detected
 [.] FIPS mode disabled
 [ ] Compression disabled
@@ -12,7 +12,7 @@
 [ ] Ciphers: HIGH:!aNULL:!SSLv2:!DH:!kDHEPSK
 [ ] TLSv1.3 ciphersuites: TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256
 [ ] TLS options: 0x02100004 (+0x00000000, -0x00000000)
-[ ] Loading certificate from file: /opt/GIT/w1f1t-kal1/curl-7.65.3/tests/certs/Server-localhost-lastSAN-sv.pem
+[ ] Loading certificate from file: /opt/GIT/w1f1tEkal1/curl-7.65.3/tests/certs/Server-localhost-lastSAN-sv.pem
 [!] SSL_CTX_use_certificate_chain_file: ../ssl/ssl_rsa.c:310: error:140AB18E:SSL routines:SSL_CTX_use_certificate:ca md too weak
 [!] Service [curltest]: Failed to initialize TLS context
 [ ] Deallocating section defaults
