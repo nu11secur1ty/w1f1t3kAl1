@@ -4,7 +4,7 @@
 try:
     from .config import Configuration
 except (ValueError, ImportError) as e:
-    raise Exception('You may need to run wifite from the root directory (which includes README.md)', e)
+    raise Exception('You may need to run w1fit3kAl1 from the root directory (which includes README.md)', e)
 
 from .util.color import Color
 
@@ -24,7 +24,7 @@ class Wifite(object):
         Configuration.initialize(load_interface=False)
 
         if os.getuid() != 0:
-            Color.pl('{!} {R}error: {O}wifite{R} must be run as {O}root{W}')
+            Color.pl('{!} {R}error: {O}w1fit3kAl1{R} must be run as {O}root{W}')
             Color.pl('{!} {R}re-run with {O}sudo{W}')
             Configuration.exit_gracefully(0)
 
@@ -57,7 +57,7 @@ class Wifite(object):
     def print_banner(self):
         '''Displays ASCII art of the highest caliber.'''
         Color.pl(r' {G}  .     {GR}{D}     {W}{G}     .    {W}')
-        Color.pl(r' {G}.´  ·  .{GR}{D}     {W}{G}.  ·  `.  {G}wifite {D}%s{W}' % Configuration.version)
+        Color.pl(r' {G}.´  ·  .{GR}{D}     {W}{G}.  ·  `.  {G}w1fit3kAl1 {D}%s{W}' % Configuration.version)
         Color.pl(r' {G}:  :  : {GR}{D} (¯) {W}{G} :  :  :  {W}{D}automated wireless auditor{W}')
         Color.pl(r' {G}`.  ·  `{GR}{D} /¯\ {W}{G}´  ·  .´  {C}{D}https://github.com/nu11secur1ty/w1f1t-kal1{W}')
         Color.pl(r' {G}  `     {GR}{D}/¯¯¯\{W}{G}     ´    {W}')
@@ -89,8 +89,8 @@ class Wifite(object):
 
 def entry_point():
     try:
-        wifite = Wifite()
-        wifite.start()
+        w1fit3kAl1 = Wifite()
+        w1fit3kAl1.start()
     except Exception as e:
         Color.pexception(e)
         Color.pl('\n{!} {R}Exiting{W}\n')
