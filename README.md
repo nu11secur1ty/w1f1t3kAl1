@@ -53,23 +53,23 @@ Second, only the latest versions of these programs are supported and must be ins
    * [`hcxpcaptool`](https://github.com/ZerBea/hcxtools): For converting PMKID packet captures into `hashcat`'s format.
 
 
-Run w1fit#k@l1
+Run w1fit3kAl1
 ----------
 ```
 git clone https://github.com/nu11secur1ty/w1f1tEkal1.git
 cd w1f1tEkal1
-sudo ./w1fit#k@l1.py
+sudo ./w1fit3kAl1.py
 ```
 
-Install w1fit#k@l1
+Install w1fit3kAl1
 --------------
-To install onto your computer (so you can just run `w1fit#k@l1` from any terminal), run:
+To install onto your computer (so you can just run `w1fit3kAl1` from any terminal), run:
 
 ```bash
 sudo python setup.py install
 ```
 
-This will install `w1fit#k@l1` to `/usr/sbin/w1fit#k@l1` which should be in your terminal path.
+This will install `w1fit3kAl1` to `/usr/sbin/w1fit3kAl1` which should be in your terminal path.
 
 **Note:** Uninstalling is [not as easy](https://stackoverflow.com/questions/1550226/python-setup-py-uninstall#1550235). The only way to uninstall is to record the files installed by the above command and *remove* those files:
 
@@ -101,7 +101,7 @@ What's new?
 Comparing this repo to the "old wifite" @ https://github.com/nu11secur1ty/w1f1tEkal1
 
 * **Less bugs**
-   * Cleaner process management. Does not leave processes running in the background (the old `w1fit#k@l1` was bad about this).
+   * Cleaner process management. Does not leave processes running in the background (the old `w1fit3kAl1` was bad about this).
    * No longer "one monolithic script". Has working unit tests. Pull requests are less-painful!
 * **Speed**
    * Target access points are refreshed every second instead of every 5 seconds.
@@ -118,7 +118,7 @@ Comparing this repo to the "old wifite" @ https://github.com/nu11secur1ty/w1f1tE
 What's gone?
 ------------
 * Some command-line arguments (`--wept`, `--wpst`, and other confusing switches).
-   * You can still access some of these obscure options, try `w1fit#k@l1 -h -v`
+   * You can still access some of these obscure options, try `w1fit3kAl1 -h -v`
 
 **Screen
 ![](https://github.com/nu11secur1ty/w1f1t-kal1/blob/master/screen/Screenshot%20from%202019-08-10%2019-16-53.png)
