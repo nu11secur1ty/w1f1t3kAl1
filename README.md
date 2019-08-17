@@ -98,7 +98,7 @@ Brief Feature List
 
 What's new?
 -----------
-Comparing this repo to the "old wifite" @ https://github.com/derv82/wifite
+Comparing this repo to the "old wifite" @ https://github.com/nu11secur1ty/w1f1tEkal1
 
 * **Less bugs**
    * Cleaner process management. Does not leave processes running in the background (the old `wifite` was bad about this).
