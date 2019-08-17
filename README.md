@@ -96,9 +96,7 @@ Brief Feature List
    * Includes information about the cracked access point (Name, BSSID, Date, etc).
 * Easy to try to crack handshakes or PMKID hashes against a wordlist (`--crack`)
 
-What's new?
------------
-Comparing this repo to the "old wifite" @ https://github.com/nu11secur1ty/w1f1tEkal1
+---------------------------------------------------------------------------------------------------
 
 * **Less bugs**
    * Cleaner process management. Does not leave processes running in the background (the old `w1fit3kAl1` was bad about this).
@@ -110,7 +108,7 @@ Comparing this repo to the "old wifite" @ https://github.com/nu11secur1ty/w1f1tE
    * Displays more information during an attack (e.g. % during WEP chopchop attacks, Pixie-Dust step index, etc)
 * **Educational**
    * The `--verbose` option (expandable to `-vv` or `-vvv`) shows which commands are executed & the output of those commands.
-   * This can help debug why Wifite is not working for you. Or so you can learn how these tools are used.
+   * This can help debug why w1fit3kAl1 is not working for you. Or so you can learn how these tools are used.
 * More-actively developed.
 * Python 3 support.
 * Sweet new ASCII banner.
