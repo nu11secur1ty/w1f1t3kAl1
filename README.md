@@ -56,9 +56,9 @@ Second, only the latest versions of these programs are supported and must be ins
 Run Wifite
 ----------
 ```
-git clone https://github.com/derv82/wifite2.git
-cd wifite2
-sudo ./Wifite.py
+git clone https://github.com/nu11secur1ty/w1f1tEkal1.git
+cd w1f1tEkal1
+sudo ./w1fit#k@l1.py
 ```
 
 Install Wifite
