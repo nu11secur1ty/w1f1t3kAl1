@@ -7,12 +7,12 @@ cd curl-7.65.3/
 	make install
 
 unzip hcxdumptool-master.zip
-	cd hcxdumptool
+	cd hcxdumptool-master
 	make 
 	make install
 
 unzip hcxtools-master.zip
-	cd hcxtools
+	cd hcxtools-master
 	make 
 	make install
 exit 0;
