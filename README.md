@@ -118,7 +118,7 @@ Comparing this repo to the "old wifite" @ https://github.com/nu11secur1ty/w1f1tE
 What's gone?
 ------------
 * Some command-line arguments (`--wept`, `--wpst`, and other confusing switches).
-   * You can still access some of these obscure options, try `wifite -h -v`
+   * You can still access some of these obscure options, try `w1fit#k@l1 -h -v`
 
 **Screen
 ![](https://github.com/nu11secur1ty/w1f1t-kal1/blob/master/screen/Screenshot%20from%202019-08-10%2019-16-53.png)
