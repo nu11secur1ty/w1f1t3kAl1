@@ -60,6 +60,11 @@ git clone https://github.com/nu11secur1ty/w1f1tEkal1.git
 cd w1f1tEkal1
 sudo ./w1fit3kAl1.py
 ```
+# Python3
+
+```bash
+python3 w1fit3kAl1.py --option
+```
 
 Install w1fit3kAl1
 --------------
