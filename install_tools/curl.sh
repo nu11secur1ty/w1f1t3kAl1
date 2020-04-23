@@ -6,5 +6,4 @@ cd curl-7.65.3/
 	./configure
 	make
 	make install
-
 exit 0;
