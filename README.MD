@@ -47,7 +47,6 @@ Second, only the latest versions of these programs are supported and must be ins
    * Alternative to Reaver. Specify `--bully` to use Bully instead of Reaver.
    * Bully is also used to fetch PSK if `reaver` cannot after cracking WPS PIN.
 * [`coWPAtty`](https://tools.kali.org/wireless-attacks/cowpatty): For detecting handshake captures.
-* [`pyrit`](https://github.com/JPaulMora/Pyrit): For detecting handshake captures.
 * [`hashcat`](https://hashcat.net/): For cracking PMKID hashes.
    * [`hcxdumptool`](https://github.com/ZerBea/hcxdumptool): For capturing PMKID hashes.
    * [`hcxpcaptool`](https://github.com/ZerBea/hcxtools): For converting PMKID packet captures into `hashcat`'s format.
