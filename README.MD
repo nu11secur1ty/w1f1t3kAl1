@@ -18,7 +18,7 @@ Supported Operating Systems
 ---------------------------
 w1fit3kAl1 is designed specifically for the latest version of [**Kali** Linux](https://www.kali.org/). [ParrotSec](https://www.parrotsec.org/) is also supported.
 
-Other pen-testing distributions (such as BackBox or Ubuntu) have outdated versions of the tools used by w1fit3kAl1. Do not expect support unless you are using the latest versions of the *Required Tools*, and also [patched wireless drivers that support injection]().
+Other pen-testing distributions (such as BackBox or Ubuntu) have outdated versions of the tools used by w1fit3kAl1. Do not expect support unless you are using the latest versions of the *Required Tools*, and also [patched wireless drivers that support injection](https://github.com/nu11secur1ty/w1f1t3kal1/tree/master/packages).
 
 Required Tools
 --------------
