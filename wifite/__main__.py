@@ -58,7 +58,7 @@ class Wifite(object):
         '''Displays ASCII art of the highest caliber.'''
         Color.pl(r' {G}  .     {GR}{D}     {W}{G}     .    {W}')
         Color.pl(r' {G}.´  ·  .{GR}{D}     {W}{G}.  ·  `.  {G}w1fit3kAl1 {D}%s{W}' % Configuration.version)
-        Color.pl(r' {G}:  :  : {GR}{D} (¯) {W}{G} :  :  :  {W}{D}automated wireless auditor{W}')
+        Color.pl(r' {G}:  :  : {GR}{D} (¯) {W}{G} :  :  :  {W}{D}automated WIFI hacking program f0r Kali-Linux-2020.x{W}')
         Color.pl(r' {G}`.  ·  `{GR}{D} /¯\ {W}{G}´  ·  .´  {C}{D}https://github.com/nu11secur1ty/w1f1tEkal1{W}')
         Color.pl(r' {G}  `     {GR}{D}/¯¯¯\{W}{G}     ´    {W}')
         Color.pl('')
