@@ -1,6 +1,6 @@
 w1fit3kAl1 2020.2
 ======
-![](https://github.com/nu11secur1ty/w1f1t3kal1/blob/master/screen/Screenshot%20from%202020-04-23%2023-10-04.png)
+![](https://github.com/nu11secur1ty/w1f1t3kal1/blob/master/screen/w1fit3kAl1.png)
 
 This repo is a complete re-write of [`wifite`](https://github.com/derv82/wifite) and developed by[`nu11secur1ty`](https://github.com/nu11secur1ty/w1f1t3kal1), a Python script for auditing wireless networks.
 
@@ -65,6 +65,10 @@ sudo ./w1fit3kAl1.py
 ```bash
 python3 w1fit3kAl1.py --option
 ```
+# After action:
+
+![](https://github.com/nu11secur1ty/w1f1t3kal1/blob/master/screen/Screenshot%20from%202020-04-24%2007-44-57.png)
+
 
 Install w1fit3kAl1
 --------------
