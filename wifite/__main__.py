@@ -62,7 +62,7 @@ class Wifite(object):
         Color.pl(r' {C}{D}https://github.com/nu11secur1ty/w1f1tEkal1{W}')
         Color.pl('')
         
-        color.pl('--------------------------------------------------------------------')
+        color.pl(r'-------------------------------------------------------------------')
         Color.pl(r' {W}{G}         88       88       eeee                     88   {W}')
         Color.pl(r' {W}{G}e   e  e  8   eeee 8 eeeee    8  e   e  eeeee e      8   {W}')
         Color.pl(r' {W}{G}8   8  8  8   8    8   8      8  8   8  8   8 8      8   {W}')
