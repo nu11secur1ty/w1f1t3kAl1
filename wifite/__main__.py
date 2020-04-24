@@ -55,6 +55,7 @@ class Wifite(object):
 
             
     def print_banner(self):
+        Color.pl(r' {W}{G}{W}')
     
         '''Displays ASCII art of the highest caliber.'''
         Color.pl(r' {G}w1fit3kAl1 {D}%s{W}' % Configuration.version)
