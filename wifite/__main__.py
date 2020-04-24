@@ -63,13 +63,15 @@ class Wifite(object):
         Color.pl(r' {G}  `     {GR}{D}/¯¯¯\{W}{G}     ´    {W}')
         Color.pl('')
         
-        Color.pl(r' {W}{G}          88       88      eeee                     88  
-                           e   e  e  8   eeee 8 eeeee   8  e   e  eeeee e      8  
-                           8   8  8  8   8    8   8     8  8   8  8   8 8      8  
-                           8e  8  8  8   8eee 8   8e eee8  8eee8e 8eee8 8e     8  
-                           88  8  8 8888 88  8888 88    88 88   8 88  8 88    8888
-                           88ee8ee8 8888 88  8888 88 eee88 88   8 88  8 88eee 8888 {W}')
-
+        '''Displays ASCII art of the highest caliber.'''
+        Color.pl(r' {W}{G}          88       88      eeee                     88  {W}')
+        Color.pl(r' {W}{G}e   e  e  8   eeee 8 eeeee   8  e   e  eeeee e      8   {W}')
+        Color.pl(r' {W}{G}8   8  8  8   8    8   8     8  8   8  8   8 8      8   {W}')
+        Color.pl(r' {W}{G}8e  8  8  8   8eee 8   8e eee8  8eee8e 8eee8 8e     8   {W}')
+        Color.pl(r' {W}{G}88  8  8 8888 88  8888 88    88 88   8 88  8 88    8888 {W}')
+        Color.pl(r' {W}{G}88ee8ee8 8888 88  8888 88 eee88 88   8 88  8 88eee 8888 {W}')
+        Color.pl('')
+        
     def scan_and_attack(self):
         '''
         1) Scans for targets, asks user to select targets
