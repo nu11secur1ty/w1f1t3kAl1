@@ -62,6 +62,8 @@ class Wifite(object):
         Color.pl(r' {G}`.  ·  `{GR}{D} /¯\ {W}{G}´  ·  .´  {C}{D}https://github.com/nu11secur1ty/w1f1tEkal1{W}')
         Color.pl(r' {G}  `     {GR}{D}/¯¯¯\{W}{G}     ´    {W}')
         Color.pl('')
+        
+        Color.pl(r'@@@  @@@  @@@  @@@ @@@@@@@@  @@@ @@@@@@@ @@@@@@  @@@  @@@  @@@@@@ @@@     @@@')
 
     def scan_and_attack(self):
         '''
