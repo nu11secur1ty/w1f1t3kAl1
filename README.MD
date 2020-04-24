@@ -1,4 +1,4 @@
-w1fit3kAl1 2020.2
+w1fit3kAl1 2020.2 - Development...
 ======
 ![](https://github.com/nu11secur1ty/w1f1t3kal1/blob/master/screen/w1f1t3kAl1.png)
 
