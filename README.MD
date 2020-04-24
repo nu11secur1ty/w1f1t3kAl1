@@ -127,7 +127,7 @@ Brief Feature List
 * Python 3 support.
 * Sweet new ASCII banner.
 
-What's gone?
+Old Version
 ------------
 * Some command-line arguments (`--wept`, `--wpst`, and other confusing switches).
    * You can still access some of these obscure options, try `w1fit3kAl1 -h -v`
