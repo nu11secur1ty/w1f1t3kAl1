@@ -53,15 +53,16 @@ class Wifite(object):
             Configuration.get_monitor_mode_interface()
             self.scan_and_attack()
 
-
+            
     def print_banner(self):
+    
         '''Displays ASCII art of the highest caliber.'''
         Color.pl(r' {G}w1fit3kAl1 {D}%s{W}' % Configuration.version)
         Color.pl(r' {W}{D}automated WIFI program for penetration and testing f0r Kali-Linux-2020.x{W}')
         Color.pl(r' {C}{D}https://github.com/nu11secur1ty/w1f1tEkal1{W}')
         Color.pl('')
         
-        '''Displays ASCII art of the highest caliber.'''
+        color.pl('--------------------------------------------------------------------')
         Color.pl(r' {W}{G}         88       88       eeee                     88   {W}')
         Color.pl(r' {W}{G}e   e  e  8   eeee 8 eeeee    8  e   e  eeeee e      8   {W}')
         Color.pl(r' {W}{G}8   8  8  8   8    8   8      8  8   8  8   8 8      8   {W}')
