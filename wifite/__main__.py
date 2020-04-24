@@ -56,11 +56,9 @@ class Wifite(object):
 
     def print_banner(self):
         '''Displays ASCII art of the highest caliber.'''
-        Color.pl(r' {G}  .     {GR}{D}     {W}{G}     .    {W}')
-        Color.pl(r' {G}.´  ·  .{GR}{D}     {W}{G}.  ·  `.  {G}w1fit3kAl1 {D}%s{W}' % Configuration.version)
-        Color.pl(r' {G}:  :  : {GR}{D} (¯) {W}{G} :  :  :  {W}{D}automated WIFI program for penetration and testing f0r Kali-Linux-2020.x{W}')
-        Color.pl(r' {G}`.  ·  `{GR}{D} /¯\ {W}{G}´  ·  .´  {C}{D}https://github.com/nu11secur1ty/w1f1tEkal1{W}')
-        Color.pl(r' {G}  `     {GR}{D}/¯¯¯\{W}{G}     ´    {W}')
+        Color.pl(r' {G}w1fit3kAl1 {D}%s{W}' % Configuration.version)
+        Color.pl(r' {W}{D}automated WIFI program for penetration and testing f0r Kali-Linux-2020.x{W}')
+        Color.pl(r' {C}{D}https://github.com/nu11secur1ty/w1f1tEkal1{W}')
         Color.pl('')
         
         '''Displays ASCII art of the highest caliber.'''
