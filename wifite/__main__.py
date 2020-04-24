@@ -63,7 +63,7 @@ class Wifite(object):
         Color.pl(r' {G}  `     {GR}{D}/¯¯¯\{W}{G}     ´    {W}')
         Color.pl('')
         
-         Color.pl(r' {G}  qwqwww {W}')
+        Color.pl(r' {W}{G}     test    {W}')
 
     def scan_and_attack(self):
         '''
