@@ -92,6 +92,8 @@ sudo python setup.py install --record files.txt \
   && cat files.txt | xargs sudo rm \
   && rm -f files.txt
 ```
+# Fix your wifi integrated interfaces
+
 
 Brief Feature List
 ------------------
