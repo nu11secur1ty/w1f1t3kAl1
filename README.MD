@@ -60,6 +60,11 @@ git clone https://github.com/nu11secur1ty/w1f1tEkal1.git
 cd w1f1tEkal1
 sudo ./w1fit3kAl1.py
 ```
+# Fix your wifi integrated interfaces
+```perl
+perl perl local_wifi_fix_monitoring/shurikeni.pl
+```
+
 # Python3
 
 ```bash
@@ -92,10 +97,7 @@ sudo python setup.py install --record files.txt \
   && cat files.txt | xargs sudo rm \
   && rm -f files.txt
 ```
-# Fix your wifi integrated interfaces
-```perl
-perl perl local_wifi_fix_monitoring/shurikeni.pl
-```
+
 --------------------------------------------------------------------------------------------------------------------
 
 Brief Feature List
