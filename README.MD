@@ -62,7 +62,7 @@ sudo ./w1fit3kAl1.py
 ```
 # Fix your wifi integrated interfaces
 ```perl
-perl perl local_wifi_fix_monitoring/shurikeni.pl
+perl local_wifi_fix_monitoring/shurikeni.pl
 ```
 
 # Python3
