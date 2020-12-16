@@ -93,7 +93,10 @@ sudo python setup.py install --record files.txt \
   && rm -f files.txt
 ```
 # Fix your wifi integrated interfaces
-
+```perl
+perl perl local_wifi_fix_monitoring/shurikeni.pl
+```
+--------------------------------------------------------------------------------------------------------------------
 
 Brief Feature List
 ------------------
