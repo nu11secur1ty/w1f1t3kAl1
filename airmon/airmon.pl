@@ -5,6 +5,10 @@ use warnings;
 use diagnostics;
 use Term::ANSIColor;
 
+print color('bold green');
+print "Usage: Use ./w1f1t3kAl1 --help after choosing your monitoring interface!\n";
+	print color('reset');
+
 print color('bold blue');
 print "This is your wifi interfaces\n";
 	print color('reset');
