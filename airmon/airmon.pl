@@ -9,6 +9,7 @@ print "\n";
 print color('bold green');
 print "Usage: Start the program by using ./w1f1t3kAl1 --help if you want to know how to use it!\n";
 	print color('reset');
+	print "\n";
 
 print color('bold blue');
 print "This is your wifi interfaces\n";
@@ -26,4 +27,5 @@ print "Give your wifi integrated interface?\n";
 	my $target = <STDIN>;
 	my $mon_stop_wifi = `airmon-ng stop $target`;
 	my $mon_interface = `airmon-ng start $target`;
+	
 	exit 0;
