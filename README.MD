@@ -60,9 +60,10 @@ git clone https://github.com/nu11secur1ty/w1f1tEkal1.git
 cd w1f1tEkal1
 sudo ./w1fit3kAl1.py
 ```
+
 # Fix your wifi integrated interfaces
 ```perl
-perl local_wifi_fix_monitoring/shurikeni.pl
+perl airmon/airmon.pl
 ```
 
 # Python3
