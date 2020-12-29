@@ -24,5 +24,4 @@ print "Usage: ./w1f1t3kAl1 --help\n";
 	my $target = <STDIN>;
 	my $mon_stop_wifi = `airmon-ng stop $target`;
 	my $mon_interface = `airmon-ng start $target`;
-
 	exit 0;
