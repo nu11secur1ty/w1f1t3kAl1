@@ -5,8 +5,9 @@ use warnings;
 use diagnostics;
 use Term::ANSIColor;
 
+print "\n";
 print color('bold green');
-print "Usage: ./w1f1t3kAl1 --help\n";
+print "Usage: Start the program by using ./w1f1t3kAl1 --help if you want to know how to use it!\n";
 	print color('reset');
 
 print color('bold blue');
@@ -22,9 +23,6 @@ print color('bold red');
 print "Give your wifi integrated interface?\n";
 	print color('reset');
 
-print color('bold green');
-print "Usage: Use ./w1f1t3kAl1 --help after choosing your monitoring interface!\n";
-	print color('reset');
 	my $target = <STDIN>;
 	my $mon_stop_wifi = `airmon-ng stop $target`;
 	my $mon_interface = `airmon-ng start $target`;
