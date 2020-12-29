@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# Author @nu11secur1ty 2020
 use strict;
 use warnings;
 use diagnostics;
@@ -19,4 +20,7 @@ print "Give your wifi integrated interface?\n";
 	my $mon_stop_wifi = `airmon-ng stop $target`;
 	my $mon_interface = `airmon-ng start $target`;
 		print color('reset');
+print color('bold green')
+print "Usage: ./w1f1t3kAl1 --help\n";
+print color('reset');
 	exit 0;
