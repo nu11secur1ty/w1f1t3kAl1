@@ -6,9 +6,8 @@ setup(
     name='wifite',
     version=Configuration.version,
     author='derv82',
-    developement='nu11secur1ty',
-    author_email='penetrateoffensive@gmail.com',
-    url='https://github.com/nu11secur1ty/w1f1tEkal1',
+    author_email='derv82@gmail.com',
+    url='https://github.com/derv82/wifite2',
     packages=[
         'wifite',
         'wifite/attack',

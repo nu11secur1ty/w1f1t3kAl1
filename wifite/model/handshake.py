@@ -4,6 +4,7 @@
 from ..util.process import Process
 from ..util.color import Color
 from ..tools.tshark import Tshark
+from ..tools.pyrit import Pyrit
 
 import re, os
 
@@ -32,9 +33,11 @@ class Handshake(object):
         # Get list of bssid/essid pairs from cap file
         pairs = Tshark.bssid_essid_pairs(self.capfile, bssid=self.bssid)
 
+        if len(pairs) == 0:
+            pairs = self.pyrit_handshakes() # Find bssid/essid pairs that have handshakes in Pyrit
 
         if len(pairs) == 0 and not self.bssid and not self.essid:
-            # Tshark failed us, nothing else we can do.
+            # Tshark and Pyrit failed us, nothing else we can do.
             raise ValueError('Cannot find BSSID or ESSID in cap file %s' % self.capfile)
 
         if not self.essid and not self.bssid:
@@ -104,6 +107,11 @@ class Handshake(object):
         return []
 
 
+    def pyrit_handshakes(self):
+        '''Returns list[tuple] of BSSID & ESSID pairs.'''
+        return Pyrit.bssid_essid_with_handshakes(
+                self.capfile, bssid=self.bssid, essid=self.essid)
+
 
     def aircrack_handshakes(self):
         '''Returns tuple (BSSID,None) if aircrack thinks self.capfile contains a handshake / can be cracked'''
@@ -125,6 +133,9 @@ class Handshake(object):
 
         if Tshark.exists():
             Handshake.print_pairs(self.tshark_handshakes(),   self.capfile, 'tshark')
+
+        if Pyrit.exists():
+            Handshake.print_pairs(self.pyrit_handshakes(),    self.capfile, 'pyrit')
 
         if Process.exists('cowpatty'):
             Handshake.print_pairs(self.cowpatty_handshakes(), self.capfile, 'cowpatty')
