@@ -60,7 +60,7 @@ class Wifite(object):
         '''Displays ASCII art of the highest caliber.'''
         Color.pl(r' {G}w1fit3kAl1 {D}%s{W}' % Configuration.version)
         Color.pl(r' {W}{D}automated WIFI program for penetration and testing f0r Kali-Linux-2020.x{W}')
-        Color.pl(r' {C}{D}https://github.com/nu11secur1ty/w1f1tEkal1{W}')
+        Color.pl(r' {C}{D}https://github.com/nu11secur1ty/w1f1t3kal1{W}')
         Color.pl('')
         
         Color.pl(r' {W}{G}---------------------------------------------------------{W}')
