@@ -16,7 +16,7 @@ print color('bold blue');
 print "This is your wifi interfaces\n";
 	print color('reset');
 
-my $your_interfaces = `ifconfig -a | sed 's/[ \t].*//;/^$/d'`;
+my $your_interfaces = `bash airmon/airmon.sh`;
 	print color('bold yellow');
 	print "$your_interfaces\n";
 	print color('reset');
