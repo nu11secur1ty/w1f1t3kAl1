@@ -65,15 +65,16 @@ cd w1f1tEkal1
 sudo ./w1fit3kAl1.py
 ```
 
-# Fix your wifi integrated interfaces
-```perl
-perl airmon/airmon.pl
-```
 - - - ***RECOMMENDED***
 # Python3
 
 ```bash
 python3 w1fit3kAl1.py --option
+```
+
+# Fix your wifi integrated interfaces
+```perl
+perl airmon/airmon.pl
 ```
 
 # After action:
