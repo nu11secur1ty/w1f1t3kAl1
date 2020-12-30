@@ -16,7 +16,7 @@ print color('bold blue');
 print "This is your wifi interfaces\n";
 	print color('reset');
 
-my $your_interfaces = `iwconfig`;
+my $your_interfaces = `ifconfig -a | sed 's/[ \t].*//;/^$/d'`;
 	print color('bold yellow');
 	print "$your_interfaces\n";
 	print color('reset');
