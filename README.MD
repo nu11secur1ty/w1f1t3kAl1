@@ -64,16 +64,18 @@ git clone https://github.com/nu11secur1ty/w1f1tEkal1.git
 cd w1f1tEkal1
 sudo ./w1fit3kAl1.py
 ```
-# Fix your wifi integrated interfaces
-```perl
-perl airmon/airmon.pl
-```
 - - - ***RECOMMENDED***
 # Python3
 
 ```bash
 python3 w1fit3kAl1.py --option
 ```
+
+# Fix your wifi integrated interfaces
+```perl
+perl airmon/airmon.pl
+```
+
 # After action:
 
 ![](https://github.com/nu11secur1ty/w1f1t3kal1/blob/master/screen/Screenshot%20from%202020-04-24%2007-44-57.png)
