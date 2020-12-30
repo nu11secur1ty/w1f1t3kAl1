@@ -7,7 +7,8 @@ use Term::ANSIColor;
 
 print "\n";
 print color('bold green');
-print "Usage: Start the program by using ./w1f1t3kAl1 --help if you want to know how to use it!\n";
+print "RECOMMENDED Usage: Start the program by using (python3 w1f1t3kAl1 --help) if you want to know how to use it!\n";
+print "Usage: Start the program by using (./w1f1t3kAl1 --help) if you want to know how to use it!\n";
 	print color('reset');
 	print "\n";
 
