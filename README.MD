@@ -4,7 +4,7 @@ w1fit3kAl1 2020.4, Development...
 
 - - - mon-fix
 
-![](https://github.com/nu11secur1ty/w1f1t3kAl1/blob/master/screen/w1f1t3kAl1-2020.4-mon-fix.png)
+![](https://github.com/nu11secur1ty/w1f1t3kAl1/blob/master/screen/2020.4.png)
 
 This repo is a complete re-write of [`wifite`](https://github.com/derv82/wifite) and developed by[`nu11secur1ty`](https://github.com/nu11secur1ty/w1f1t3kal1), a Python script for auditing wireless networks.
 
