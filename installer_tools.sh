@@ -5,5 +5,6 @@ cd install_tools
 	# bash hcxdumptool.sh
 	# bash hcxtools.sh
 	apt install hcxtools -y
-		bash install_tools/Pyrit/installer.sh
+cd Pyrit/
+	bash installer.sh
 exit 0;
