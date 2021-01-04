@@ -28,5 +28,7 @@ print "Give your wifi integrated interface?\n";
 	my $target = <STDIN>;
 	my $mon_stop_wifi = `airmon-ng stop $target`;
 	my $mon_interface = `airmon-ng start $target`;
+		sleep 3;
+		my $stop_clean = `kill $(pgrep -f airmon-ng)`;
 	
 	exit 0;
