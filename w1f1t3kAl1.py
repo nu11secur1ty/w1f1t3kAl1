@@ -6,4 +6,3 @@ import os
 os.system('perl airmon/airmon.pl')
 from wifite import __main__
 __main__.entry_point()
-os.system('bash airmon/reload_net.sh')
