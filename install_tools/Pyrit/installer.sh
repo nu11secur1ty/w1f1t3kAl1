@@ -17,7 +17,7 @@ printf '\033]2;Downloading Pyrit\a'
   cd Pyrit
     python setup.py clean
     python setup.py build
-    sudo python setup.py install
+    python setup.py install
 echo "Installation finished"
 printf '\033]2; Installation finished\a'
     exit 0
