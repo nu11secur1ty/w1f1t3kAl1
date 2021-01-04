@@ -90,9 +90,6 @@ class Wifite(object):
         attacked_targets = AttackAll.attack_multiple(targets)
 
         Color.pl('{+} Finished attacking {C}%d{W} target(s), exiting' % attacked_targets)
-        
-        # exit_gracefully
-        os.system('bash reload_net.sh')
 
 
 ##############################################################
