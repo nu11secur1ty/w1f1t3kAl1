@@ -28,5 +28,5 @@ print "Give your wifi integrated interface?\n";
 	my $target = <STDIN>;
 	my $mon_stop_wifi = `airmon-ng stop $target`;
 	my $mon_interface = `airmon-ng start $target`;
-	my $reload_net = `pgrep -f wpa_supplicant`;
+	my $reload_net = `bash airmon/reload_net.sh`;
 		exit 0;
