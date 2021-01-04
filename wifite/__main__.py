@@ -107,7 +107,9 @@ def entry_point():
         Color.pl('\n{!} {O}Interrupted, Shutting down...{W}')
 
     Configuration.exit_gracefully(0)
-
+    
+    # exit_gracefully
+    os.system('bash reload_net.sh')
 
 if __name__ == '__main__':
     entry_point()
