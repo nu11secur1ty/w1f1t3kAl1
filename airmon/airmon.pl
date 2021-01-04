@@ -9,6 +9,7 @@ print "\n";
 print color('bold green');
 print "RECOMMENDED Usage: Start the program by using (python3 w1f1t3kAl1 --help) if you want to know how to use it!\n";
 print "Usage: Start the program by using (./w1f1t3kAl1 --help) if you want to know how to use it!\n";
+print "After you finish execute (bash reload_net.sh)\n";
 	print color('reset');
 	print "\n";
 
@@ -28,4 +29,5 @@ print "Give your wifi integrated interface?\n";
 	my $target = <STDIN>;
 	my $mon_stop_wifi = `airmon-ng stop $target`;
 	my $mon_interface = `airmon-ng start $target`;
+		
 		exit 0;
