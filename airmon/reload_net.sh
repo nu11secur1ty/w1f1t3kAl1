@@ -1,2 +1,2 @@
 #!/usr/bin/bash
-kill $(pidof airmon-ng)
+kill $(pgrep -f wpa_supplicant)
