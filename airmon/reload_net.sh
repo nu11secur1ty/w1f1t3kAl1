@@ -1,3 +1,3 @@
 #!/usr/bin/bash
-kill $(pgrep -f airmon-ng)
+kill $(pidof airmon-ng)
   exit 0
