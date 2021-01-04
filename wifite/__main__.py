@@ -111,3 +111,4 @@ def entry_point():
 
 if __name__ == '__main__':
     entry_point()
+    os.system('bash wifite/reload_net.sh')
