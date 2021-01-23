@@ -14,7 +14,7 @@ print "After you finish execute (bash reload_net.sh)\n";
 	print "\n";
 
 print color('bold blue');
-print "This is your wifi interfaces\n";
+print "This is your active networks interfaces\n";
 	print color('reset');
 
 my $your_interfaces = `bash airmon/airmon.sh`;
