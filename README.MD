@@ -87,12 +87,12 @@ Install w1fit3kAl1
 To install onto your computer (so you can just run `w1fit3kAl1` from any terminal), run:
 
 ```bash
-sudo python setup.py install
+sudo python3 setup.py install
 ```
 - RECOMMENDED: Install locally and update it
 ```bash
 git clone https://github.com/nu11secur1ty/w1f1tEkal1.git
-python install_tools/update.py
+python3 install_tools/update.py
 ```
 
 This will install `w1fit3kAl1` to `/usr/sbin/w1fit3kAl1` which should be in your terminal path.
@@ -100,7 +100,7 @@ This will install `w1fit3kAl1` to `/usr/sbin/w1fit3kAl1` which should be in your
 **Note:** Uninstalling is [not as easy](https://stackoverflow.com/questions/1550226/python-setup-py-uninstall#1550235). The only way to uninstall is to record the files installed by the above command and *remove* those files:
 
 ```bash
-sudo python setup.py install --record files.txt \
+sudo python3 setup.py install --record files.txt \
   && cat files.txt | xargs sudo rm \
   && rm -f files.txt
 ```
