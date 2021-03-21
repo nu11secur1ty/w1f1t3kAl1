@@ -1,7 +1,7 @@
 w1f1t3kAl1 2021.1 - supported by nu11secur1ty
 =========
 - A successful attack in real-time
-![](https://github.com/nu11secur1ty/w1f1t3kAl1/blob/master/screen/2021/w1f1t3-real-attack.png)
+![](https://github.com/nu11secur1ty/w1f1t3kAl1/blob/master/screen/2021/attack.png)
 
 - - - mon-fix
 
