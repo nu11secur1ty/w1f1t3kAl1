@@ -60,6 +60,10 @@ Second, only the latest versions of these programs are supported and must be ins
 
 Run w1fit3kAl1
 ----------
+
+## Need to install:
+[href](https://github.com/nu11secur1ty/pyrit-installer)
+
 ```
 git clone https://github.com/nu11secur1ty/w1f1tEkal1.git
 cd w1f1tEkal1
