@@ -62,9 +62,17 @@ Run w1fit3kAl1
 ----------
 
 ## Need to install:
+
+```bash
+hcxdumptool:
+apt install hcxdumptool
+
+hcxpcaptool:
+apt install hcxtools
+```
 [href](https://github.com/nu11secur1ty/pyrit-installer)
 
-```
+```bash
 git clone https://github.com/nu11secur1ty/w1f1tEkal1.git
 cd w1f1tEkal1
 sudo ./w1fit3kAl1.py
