@@ -6,6 +6,7 @@ from ..model.target import WPSState
 from ..util.process import Process
 import json
 
+
 class Wash(Dependency):
     ''' Wrapper for Wash program. '''
     dependency_required = False
@@ -15,7 +16,6 @@ class Wash(Dependency):
     def __init__(self):
         pass
 
-
     @staticmethod
     def check_for_wps_and_update_targets(capfile, targets):
         if not Wash.exists():
@@ -24,14 +24,19 @@ class Wash(Dependency):
         command = [
             'wash',
             '-f', capfile,
-            '-j' # json
+            '-j'  # json
         ]
 
         p = Process(command)
         try:
             p.wait()
             lines = p.stdout()
-        except:
+        except Exception as e:
+            # Manually check for keyboard interrupt as only python 3.x throws
+            # exceptions for subprocess.wait()
+            if isinstance(e, KeyboardInterrupt):
+                raise KeyboardInterrupt
+
             # Failure is acceptable
             return
 
@@ -43,11 +48,13 @@ class Wash(Dependency):
                 obj = json.loads(line)
                 bssid = obj['bssid']
                 locked = obj['wps_locked']
-                if locked != True:
+                if not locked:
                     wps_bssids.add(bssid)
                 else:
                     locked_bssids.add(bssid)
-            except:
+            except Exception as e:
+                if isinstance(e, KeyboardInterrupt):
+                    raise KeyboardInterrupt
                 pass
 
         # Update targets
@@ -67,13 +74,13 @@ if __name__ == '__main__':
     target_bssid = 'A4:2B:8C:16:6B:3A'
     from ..model.target import Target
     fields = [
-        'A4:2B:8C:16:6B:3A', # BSSID
-        '2015-05-27 19:28:44', '2015-05-27 19:28:46', # Dates
-        '11', # Channel
-        '54', # throughput
-        'WPA2', 'CCMP TKIP', 'PSK', # AUTH
-        '-58', '2', '0', '0.0.0.0', '9', # ???
-        'Test Router Please Ignore', # SSID
+        'A4:2B:8C:16:6B:3A',  # BSSID
+        '2015-05-27 19:28:44', '2015-05-27 19:28:46',  # Dates
+        '11',  # Channel
+        '54',  # throughput
+        'WPA2', 'CCMP TKIP', 'PSK',  # AUTH
+        '-58', '2', '0', '0.0.0.0', '9',  # ???
+        'Test Router Please Ignore',  # SSID
     ]
     t = Target(fields)
     targets = [t]
@@ -81,8 +88,7 @@ if __name__ == '__main__':
     # Should update 'wps' field of a target
     Wash.check_for_wps_and_update_targets(test_file, targets)
 
-    print('Target(BSSID={}).wps = {} (Expected: 1)'.format(
-        targets[0].bssid, targets[0].wps))
+    print(('Target(BSSID={}).wps = {} (Expected: 1)'.format(
+        targets[0].bssid, targets[0].wps)))
 
     assert targets[0].wps == WPSState.UNLOCKED
-

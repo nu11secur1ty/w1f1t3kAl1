@@ -8,6 +8,7 @@ import os
 import time
 from json import loads, dumps
 
+
 class CrackResult(object):
     ''' Abstract class containing results from a crack session '''
 
@@ -17,6 +18,7 @@ class CrackResult(object):
     def __init__(self):
         self.date = int(time.time())
         self.readable_date = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.date))
+        self.loc = 'ND'
 
     def dump(self):
         raise Exception('Unimplemented method: dump()')
@@ -54,8 +56,10 @@ class CrackResult(object):
         this_dict.pop('date')
         for entry in saved_results:
             this_dict['date'] = entry.get('date')
+            if 'loc' in this_dict:
+                this_dict['loc'] = entry.get('loc')
             if entry == this_dict:
-                # Skip if we already saved this BSSID+ESSID+TYPE+KEY
+                # Skip if we already saved this BSSID+ESSID+TYPE+KEY+LOC
                 Color.pl('{+} {C}%s{O} already exists in {G}%s{O}, skipping.' % (
                     self.essid, Configuration.cracked_file))
                 return
@@ -106,10 +110,10 @@ class CrackResult(object):
             result.print_single_line(longest_essid)
         Color.pl('')
 
-
     @classmethod
     def load_all(cls):
-        if not os.path.exists(cls.cracked_file): return []
+        if not os.path.exists(cls.cracked_file):
+                return []
         with open(cls.cracked_file, 'r') as json_file:
             json = loads(json_file.read())
         return json
@@ -144,24 +148,27 @@ class CrackResult(object):
                                       json['pmkid_file'],
                                       json['key'])
         result.date = json['date']
+        result.channel = json['channel']
         result.readable_date = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(result.date))
+        result.loc = json['loc']
         return result
+
 
 if __name__ == '__main__':
     # Deserialize WPA object
     Color.pl('\nCracked WPA:')
-    json = loads('{"bssid": "AA:BB:CC:DD:EE:FF", "essid": "Test Router", "key": "Key", "date": 1433402428, "handshake_file": "hs/capfile.cap", "type": "WPA"}')
+    json = loads('{"bssid": "AA:BB:CC:DD:EE:FF", "channel": "1", ""essid": "Test Router", "key": "Key", "date": 1433402428, "handshake_file": "hs/capfile.cap", "type": "WPA"}')
     obj = CrackResult.load(json)
     obj.dump()
 
     # Deserialize WEP object
     Color.pl('\nCracked WEP:')
-    json = loads('{"bssid": "AA:BB:CC:DD:EE:FF", "hex_key": "00:01:02:03:04", "ascii_key": "abcde", "essid": "Test Router", "date": 1433402915, "type": "WEP"}')
+    json = loads('{"bssid": "AA:BB:CC:DD:EE:FF", "channel": "1", "hex_key": "00:01:02:03:04", "ascii_key": "abcde", "essid": "Test Router", "date": 1433402915, "type": "WEP"}')
     obj = CrackResult.load(json)
     obj.dump()
 
     # Deserialize WPS object
     Color.pl('\nCracked WPS:')
-    json = loads('{"psk": "the psk", "bssid": "AA:BB:CC:DD:EE:FF", "pin": "01234567", "essid": "Test Router", "date": 1433403278, "type": "WPS"}')
+    json = loads('{"psk": "the psk", "bssid": "AA:BB:CC:DD:EE:FF", "channel": "1", "pin": "01234567", "essid": "Test Router", "date": 1433403278, "type": "WPS"}')
     obj = CrackResult.load(json)
     obj.dump()

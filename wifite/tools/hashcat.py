@@ -8,6 +8,8 @@ from ..util.color import Color
 
 import os
 
+hccapx_autoremove = False  # change this to True if you want the hccapx files to be automatically removed
+
 
 class Hashcat(Dependency):
     dependency_required = False
@@ -18,12 +20,12 @@ class Hashcat(Dependency):
     def should_use_force():
         command = ['hashcat', '-I']
         stderr = Process(command).stderr()
-        return 'No devices found/left' in stderr
+        return 'No devices found/left' or 'Unstable OpenCL driver detected!' in stderr
 
     @staticmethod
     def crack_handshake(handshake, show_command=False):
         # Generate hccapx
-        hccapx_file = HcxPcapTool.generate_hccapx_file(
+        hccapx_file = HcxPcapngTool.generate_hccapx_file(
                 handshake, show_command=show_command)
 
         key = None
@@ -32,7 +34,7 @@ class Hashcat(Dependency):
             command = [
                 'hashcat',
                 '--quiet',
-                '-m', '2500',
+                '-m', '22000',
                 hccapx_file,
                 Configuration.wordlist
             ]
@@ -49,11 +51,10 @@ class Hashcat(Dependency):
                 key = stdout.split(':', 5)[-1].strip()
                 break
 
-        if os.path.exists(hccapx_file):
-            os.remove(hccapx_file)
+            if os.path.exists(hccapx_file) and hccapx_autoremove is True:
+                os.remove(hccapx_file)
 
         return key
-
 
     @staticmethod
     def crack_pmkid(pmkid_file, verbose=False):
@@ -98,7 +99,7 @@ class Hashcat(Dependency):
 class HcxDumpTool(Dependency):
     dependency_required = False
     dependency_name = 'hcxdumptool'
-    dependency_url = 'https://github.com/ZerBea/hcxdumptool'
+    dependency_url = 'apt install hcxdumptool'
 
     def __init__(self, target, pcapng_file):
         # Create filterlist
@@ -112,7 +113,7 @@ class HcxDumpTool(Dependency):
         command = [
             'hcxdumptool',
             '-i', Configuration.interface,
-            '--filterlist', filterlist,
+            '--filterlist_ap', filterlist,
             '--filtermode', '2',
             '-c', str(target.channel),
             '-o', pcapng_file
@@ -127,10 +128,10 @@ class HcxDumpTool(Dependency):
         self.proc.interrupt()
 
 
-class HcxPcapTool(Dependency):
+class HcxPcapngTool(Dependency):
     dependency_required = False
-    dependency_name = 'hcxpcaptool'
-    dependency_url = 'https://github.com/ZerBea/hcxtools'
+    dependency_name = 'hcxpcapngtool'
+    dependency_url = 'apt install hcxtools'
 
     def __init__(self, target):
         self.target = target
@@ -144,7 +145,7 @@ class HcxPcapTool(Dependency):
             os.remove(hccapx_file)
 
         command = [
-            'hcxpcaptool',
+            'hcxpcapngtool',
             '-o', hccapx_file,
             handshake.capfile
         ]
@@ -167,8 +168,8 @@ class HcxPcapTool(Dependency):
             os.remove(john_file)
 
         command = [
-            'hcxpcaptool',
-            '-j', john_file,
+            'hcxpcapngtool',
+            '--john', john_file,
             handshake.capfile
         ]
 
@@ -188,7 +189,7 @@ class HcxPcapTool(Dependency):
             os.remove(self.pmkid_file)
 
         command = [
-            'hcxpcaptool',
+            'hcxpcapngtool',
             '-z', self.pmkid_file,
             pcapng_file
         ]

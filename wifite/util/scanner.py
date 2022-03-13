@@ -4,10 +4,10 @@
 from ..util.color import Color
 from ..tools.airodump import Airodump
 from ..util.input import raw_input, xrange
-from ..model.target import Target, WPSState
 from ..config import Configuration
 
 from time import sleep, time
+
 
 class Scanner(object):
     ''' Scans wifi networks & provides menu for selecting targets '''
@@ -16,18 +16,20 @@ class Scanner(object):
     UP_CHAR = '\x1B[1F'
 
     def __init__(self):
+        self.previous_target_count = 0
+        self.target_archives = {}
+        self.targets = []
+        self.target = None  # Target specified by user (based on ESSID/BSSID)
+        self.err_msg = None
+
+    def find_targets(self):
         '''
         Scans for targets via Airodump.
         Loops until scan is interrupted via user or config.
-        Note: Sets this object's `targets` attrbute (list[Target]) upon interruption.
+        Sets this object `targets` attribute (list[Target]) on interruption
         '''
-        self.previous_target_count = 0
-        self.targets = []
-        self.target = None # Target specified by user (based on ESSID/BSSID)
 
         max_scan_time = Configuration.scan_time
-
-        self.err_msg = None
 
         # Loads airodump with interface/channel/etc from Configuration
         try:
@@ -37,19 +39,16 @@ class Scanner(object):
 
                 while True:
                     if airodump.pid.poll() is not None:
-                        return  # Airodump process died
+                        return True  # Airodump process died
 
-                    self.targets = airodump.get_targets(old_targets=self.targets)
+                    self.targets = airodump.get_targets(old_targets=self.targets,
+                                                        target_archives=self.target_archives)
 
                     if self.found_target():
-                        return  # We found the target we want
+                        return True  # We found the target we want
 
                     if airodump.pid.poll() is not None:
-                        return  # Airodump process died
-
-                    for target in self.targets:
-                        if target.bssid in airodump.decloaked_bssids:
-                            target.decloaked = True
+                        return True  # Airodump process died
 
                     self.print_targets()
 
@@ -67,13 +66,52 @@ class Scanner(object):
                     Color.p(outline)
 
                     if max_scan_time > 0 and time() > scan_start_time + max_scan_time:
-                        return
+                        return True
 
                     sleep(1)
 
         except KeyboardInterrupt:
-            pass
+            if not Configuration.infinite_mode:
+                return True
 
+            from ..util.input import raw_input
+
+            options = '({G}s{W}{D}, {W}{R}e{W})'
+            prompt = '{+} Do you want to {G}start attacking{W} or {R}exit{W}%s?' % options
+
+            self.print_targets()
+            Color.clear_entire_line()
+            Color.p(prompt)
+            answer = input().lower()
+
+            if answer.startswith('e'):
+                return False
+
+            return True
+
+    def update_targets(self):
+        '''
+        Archive all the old targets
+        Returns: True if user wants to stop attack, False otherwise
+        '''
+        self.previous_target_count = 0
+        # for target in self.targets:
+        # self.target_archives[target.bssid] = ArchivedTarget(target)
+
+        self.targets = []
+        do_continue = self.find_targets()
+        return do_continue
+
+    def get_num_attacked(self):
+        '''
+        Returns: number of attacked targets by this scanner
+        '''
+        attacked_targets = 0
+        for target in list(self.target_archives.values()):
+            if target.attacked:
+                attacked_targets += 1
+
+        return attacked_targets
 
     def found_target(self):
         '''
@@ -88,22 +126,20 @@ class Scanner(object):
             return False  # No specific target from user.
 
         for target in self.targets:
-            if Configuration.wps_only and target.wps not in [WPSState.UNLOCKED, WPSState.LOCKED]:
-                continue
+            # if Configuration.wps_only and target.wps not in [WPSState.UNLOCKED, WPSState.LOCKED]:
+            #    continue
             if bssid and target.bssid and bssid.lower() == target.bssid.lower():
                 self.target = target
                 break
-            if essid and target.essid and essid.lower() == target.essid.lower():
+            if essid and target.essid and essid == target.essid:
                 self.target = target
                 break
 
         if self.target:
-            Color.pl('\n{+} {C}found target{G} %s {W}({G}%s{W})'
-                % (self.target.bssid, self.target.essid))
+            Color.pl('\n{+} {C}found target{G} %s {W}({G}%s{W})' % (self.target.bssid, self.target.essid))
             return True
 
         return False
-
 
     def print_targets(self):
         '''Prints targets selection menu (1 target per row).'''
@@ -138,20 +174,32 @@ class Scanner(object):
         Color.p('                      ESSID')
         if Configuration.show_bssids:
             Color.p('              BSSID')
-        Color.pl('   CH  ENCR  POWER  WPS?  CLIENT')
+
+        if Configuration.show_manufacturers:
+            Color.p('           MANUFACTURER')
+
+        Color.pl('   CH  ENCR   POWER  WPS?  CLIENT')
 
         # Second row: separator
         Color.p('   ---')
         Color.p('  -------------------------')
         if Configuration.show_bssids:
             Color.p('  -----------------')
-        Color.pl('  ---  ----  -----  ----  ------{W}')
+
+        if Configuration.show_manufacturers:
+            Color.p('  ---------------------')
+
+        Color.pl('  ---  -----  -----  ----  ------{W}')
 
         # Remaining rows: targets
         for idx, target in enumerate(self.targets, start=1):
             Color.clear_entire_line()
             Color.p('   {G}%s  ' % str(idx).rjust(3))
-            Color.pl(target.to_str(Configuration.show_bssids))
+            Color.pl(target.to_str(
+                    Configuration.show_bssids,
+                    Configuration.show_manufacturers
+                    )
+                )
 
     @staticmethod
     def get_terminal_height():
@@ -169,6 +217,7 @@ class Scanner(object):
         '''
         Returns list(target)
         Either a specific target if user specified -bssid or --essid.
+        If the user used pillage or infinite attack mode retuns all the targets
         Otherwise, prompts user to select targets and returns the selection.
         '''
 
@@ -182,13 +231,14 @@ class Scanner(object):
 
             # TODO Print a more-helpful reason for failure.
             # 1. Link to wireless drivers wiki,
-            # 2. How to check if your device supporst monitor mode,
+            # 2. How to check if your device supports monitor mode,
             # 3. Provide airodump-ng command being executed.
             raise Exception('No targets found.'
-                + ' You may need to wait longer,'
-                + ' or you may have issues with your wifi card')
+            + ' You may need to wait longer,'
+            + ' or you may have issues with your wifi card')
 
         # Return all targets if user specified a wait time ('pillage').
+        # A scan time is always set if run in infinite mode
         if Configuration.scan_time > 0:
             return self.targets
 
@@ -199,22 +249,23 @@ class Scanner(object):
         if self.err_msg is not None:
             Color.pl(self.err_msg)
 
-        input_str  = '{+} select target(s)'
+        input_str = '{+} select target(s)'
         input_str += ' ({G}1-%d{W})' % len(self.targets)
         input_str += ' separated by commas, dashes'
         input_str += ' or {G}all{W}: '
 
         chosen_targets = []
 
-        for choice in raw_input(Color.s(input_str)).split(','):
+        Color.p(input_str)
+        for choice in input().split(','):
             choice = choice.strip()
             if choice.lower() == 'all':
                 chosen_targets = self.targets
                 break
             if '-' in choice:
                 # User selected a range
-                (lower,upper) = [int(x) - 1 for x in choice.split('-')]
-                for i in xrange(lower, min(len(self.targets), upper + 1)):
+                (lower, upper) = [int(x) - 1 for x in choice.split('-')]
+                for i in range(lower, min(len(self.targets), upper + 1)):
                     chosen_targets.append(self.targets[i])
             elif choice.isdigit():
                 choice = int(choice) - 1
@@ -226,8 +277,10 @@ class Scanner(object):
 if __name__ == '__main__':
     # 'Test' script will display targets and selects the appropriate one
     Configuration.initialize()
+    targets = []
     try:
         s = Scanner()
+        s.find_targets()
         targets = s.select_targets()
     except Exception as e:
         Color.pl('\r {!} {R}Error{W}: %s' % str(e))
@@ -235,4 +288,3 @@ if __name__ == '__main__':
     for t in targets:
         Color.pl('    {W}Selected: %s' % t)
     Configuration.exit_gracefully(0)
-

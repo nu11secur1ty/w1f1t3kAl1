@@ -3,13 +3,16 @@
 
 from .util.color import Color
 
-import argparse, sys
+import argparse
+import sys
+
 
 class Arguments(object):
     ''' Holds arguments used by the Wifite '''
 
     def __init__(self, configuration):
-        # Hack: Check for -v before parsing args; so we know which commands to display.
+        # Hack: Check for -v before parsing args;
+        # so we know which commands to display.
         self.verbose = '-v' in sys.argv or '-hv' in sys.argv or '-vh' in sys.argv
         self.config = configuration
         self.args = self.get_arguments()
@@ -24,8 +27,9 @@ class Arguments(object):
         ''' Returns parser.args() containing all program arguments '''
 
         parser = argparse.ArgumentParser(usage=argparse.SUPPRESS,
-                formatter_class=lambda prog: argparse.HelpFormatter(
-                    prog, max_help_position=80, width=130))
+                formatter_class=lambda prog:
+                    argparse.HelpFormatter(
+                        prog, max_help_position=80, width=130))
 
         self._add_global_args(parser.add_argument_group(Color.s('{C}SETTINGS{W}')))
         self._add_wep_args(parser.add_argument_group(Color.s('{C}WEP{W}')))
@@ -36,7 +40,6 @@ class Arguments(object):
         self._add_command_args(parser.add_argument_group(Color.s('{C}COMMANDS{W}')))
 
         return parser.parse_args()
-
 
     def _add_global_args(self, glob):
         glob.add_argument('-v',
@@ -59,10 +62,22 @@ class Arguments(object):
             action='store',
             dest='channel',
             metavar='[channel]',
-            type=int,
-            help=Color.s('Wireless channel to scan (default: {G}all 2Ghz channels{W})'))
+            help=Color.s('Wireless channel to scan e.g. {C}1,3-6{W} ' +
+                '(default: {G}all 2Ghz channels{W})'))
         glob.add_argument('--channel', help=argparse.SUPPRESS, action='store',
-                dest='channel', type=int)
+            dest='channel')
+
+        glob.add_argument('-ab',
+            '--allbands',
+            action='store_true',
+            dest='all_bands',
+            help=self._verbose('Include both 2.4Ghz and 5Ghz bands (default: {G}off{W})'))
+
+        glob.add_argument('-2',
+            '--2ghz',
+            action='store_true',
+            dest='two_ghz',
+            help=self._verbose('Include 2.4Ghz channels (default: {G}off{W})'))
 
         glob.add_argument('-5',
             '--5ghz',
@@ -70,6 +85,12 @@ class Arguments(object):
             dest='five_ghz',
             help=self._verbose('Include 5Ghz channels (default: {G}off{W})'))
 
+        glob.add_argument('-inf',
+            '--infinite',
+            action='store_true',
+            dest='infinite_mode',
+            help=Color.s('Enable infinite attack mode. Modify scanning time with '
+                         '{C}-p{W} (default: {G}off{W})'))
 
         glob.add_argument('-mac',
             '--random-mac',
@@ -95,6 +116,27 @@ class Arguments(object):
             help=Color.s('Kill processes that conflict with Airmon/Airodump ' +
                 '(default: {G}off{W})'))
 
+        glob.add_argument('-pow',
+            '--power',
+            action='store',
+            dest='min_power',
+            metavar='[min_power]',
+            type=int,
+            help=Color.s('Attacks any targets with at least {C}min_power{W} signal strength'))
+
+        glob.add_argument('--skip-crack',
+                          action='store_true',
+                          dest='skip_crack',
+                          help=Color.s('Skip cracking captured handshakes/pmkid (default: {G}off{W})'))
+
+        glob.add_argument('-first',
+                          '--first',
+                          action='store',
+                          dest='attack_max',
+                          metavar='[attack_max]',
+                          type=int,
+                          help=Color.s('Attacks the first {C}attack_max{W} targets'))
+
         glob.add_argument('-b',
             action='store',
             dest='target_bssid',
@@ -115,14 +157,21 @@ class Arguments(object):
                 dest='target_essid', type=str)
 
         glob.add_argument('-E',
-            action='store',
-            dest='ignore_essid',
+            action='append',
+            dest='ignore_essids',
             metavar='[text]',
             type=str,
             default=None,
-            help=self._verbose('Hides targets with ESSIDs that match the given text'))
-        glob.add_argument('--ignore-essid', help=argparse.SUPPRESS, action='store',
-                dest='ignore_essid', type=str)
+            help=self._verbose('Hides targets with ESSIDs that match the given text. '
+                               'Can be used more than once.'))
+        glob.add_argument('--ignore-essid', help=argparse.SUPPRESS, action='append',
+                dest='ignore_essids', type=str)
+
+        glob.add_argument('-ic',
+            '--ignore-cracked',
+            action='store_true',
+            dest='ignore_cracked',
+            help=Color.s('Hides previously-cracked targets. (default: {G}off{W})'))
 
         glob.add_argument('--clients-only',
             action='store_true',
@@ -134,6 +183,11 @@ class Arguments(object):
             action='store_true',
             dest='show_bssids',
             help=self._verbose('Show BSSIDs of targets while scanning'))
+
+        glob.add_argument('--showm',
+            action='store_true',
+            dest='show_manufacturers',
+            help=self._verbose('Show manufacturers of targets while scanning'))
 
         glob.add_argument('--nodeauths',
             action='store_true',
@@ -154,6 +208,11 @@ class Arguments(object):
             help=self._verbose('Number of deauth packets to send (default: ' +
                 '{G}%d{W})' % self.config.num_deauths))
 
+        glob.add_argument('--daemon',
+            action='store_true',
+            dest='daemon',
+            help=Color.s('Puts device back in managed mode after quitting (default: ' +
+                '{G}off{W})'))
 
     def _add_eviltwin_args(self, group):
         pass
@@ -165,7 +224,6 @@ class Arguments(object):
                 '(default: {G}off{W})'))
         # TODO: Args to specify deauth interface, server port, etc.
         '''
-
 
     def _add_wep_args(self, wep):
         # WEP
@@ -284,7 +342,6 @@ class Arguments(object):
         wep.add_argument('-hirte', help=argparse.SUPPRESS, action='store_true',
                 dest='wep_attack_hirte')
 
-
     def _add_wpa_args(self, wpa):
         wpa.add_argument('--wpa',
             action='store_true',
@@ -348,7 +405,6 @@ class Arguments(object):
         wpa.add_argument('-strip', help=argparse.SUPPRESS, action='store_true',
                 dest='wpa_strip_handshake')
 
-
     def _add_wps_args(self, wps):
         wps.add_argument('--wps',
             action='store_true',
@@ -377,6 +433,10 @@ class Arguments(object):
             help=self._verbose('{O}Never{W} use {O}WPS Pixie-Dust{W} attack ' +
                 '(use {G}PIN attack{W})'))
 
+        wps.add_argument('--no-nullpin', action='store_true', dest='wps_no_nullpin',
+            help=self._verbose('{O}Never{W} use {O}NULL PIN{W} attack ' +
+                 '(use {G}NULL PIN attack{W})'))
+
         wps.add_argument('--bully',
             action='store_true',
             dest='use_bully',
@@ -385,6 +445,15 @@ class Arguments(object):
         # Alias
         wps.add_argument('-bully', help=argparse.SUPPRESS, action='store_true',
                 dest='use_bully')
+
+        wps.add_argument('--reaver',
+            action='store_true',
+            dest='use_reaver',
+            help=Color.s('Use {G}reaver{W} program for WPS PIN & Pixie-Dust attacks ' +
+                '(default: {G}reaver{W})'))
+        # Alias
+        wps.add_argument('-reaver', help=argparse.SUPPRESS, action='store_true',
+                dest='use_reaver')
 
         # Ignore lock-outs
         wps.add_argument('--ignore-locks', action='store_true', dest='wps_ignore_lock',
@@ -433,6 +502,12 @@ class Arguments(object):
                          dest='use_pmkid_only',
                          help=Color.s('{O}Only{W} use {C}PMKID capture{W}, avoids other WPS & ' +
                                       'WPA attacks (default: {G}off{W})'))
+        pmkid.add_argument('--no-pmkid',
+                         action='store_true',
+                         dest='dont_use_pmkid',
+                         help=Color.s('{O}Don\'t{W} use {C}PMKID capture{W} ' +
+                                      '(default: {G}off{W})'))
+
         # Alias
         pmkid.add_argument('-pmkid', help=argparse.SUPPRESS, action='store_true', dest='use_pmkid_only')
 
@@ -468,12 +543,11 @@ class Arguments(object):
             dest='crack_handshake',
             help=Color.s('Show commands to crack a captured handshake'))
 
+
 if __name__ == '__main__':
-    from .util.color import Color
     from .config import Configuration
     Configuration.initialize(False)
     a = Arguments(Configuration)
     args = a.args
-    for (key,value) in sorted(args.__dict__.items()):
-        Color.pl('{C}%s: {G}%s{W}' % (key.ljust(21),value))
-
+    for (key, value) in sorted(args.__dict__.items()):
+        Color.pl('{C}%s: {G}%s{W}' % (key.ljust(21), value))

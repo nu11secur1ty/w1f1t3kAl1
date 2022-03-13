@@ -9,6 +9,7 @@ from ..config import Configuration
 import os
 import re
 
+
 class Aircrack(Dependency):
     dependency_required = True
     dependency_name = 'aircrack-ng'
@@ -36,7 +37,6 @@ class Aircrack(Dependency):
 
         self.pid = Process(command, devnull=True)
 
-
     def is_running(self):
         return self.pid.poll() is None
 
@@ -61,7 +61,7 @@ class Aircrack(Dependency):
     def _hex_and_ascii_key(hex_raw):
         hex_chars = []
         ascii_key = ''
-        for index in xrange(0, len(hex_raw), 2):
+        for index in range(0, len(hex_raw), 2):
             byt = hex_raw[index:index+2]
             hex_chars.append(byt)
             byt_int = int(byt, 16)
@@ -77,7 +77,6 @@ class Aircrack(Dependency):
     def __del__(self):
         if os.path.exists(self.cracked_file):
             os.remove(self.cracked_file)
-
 
     @staticmethod
     def crack_handshake(handshake, show_command=False):
@@ -100,7 +99,7 @@ class Aircrack(Dependency):
 
         # Report progress of cracking
         aircrack_nums_re = re.compile(r'(\d+)/(\d+) keys tested.*\(([\d.]+)\s+k/s')
-        aircrack_key_re  = re.compile(r'Current passphrase:\s*([^\s].*[^\s])\s*$')
+        aircrack_key_re = re.compile(r'Current passphrase:\s*([^\s].*[^\s])\s*$')
         num_tried = num_total = 0
         percent = num_kps = 0.0
         eta_str = 'unknown'
@@ -124,7 +123,7 @@ class Aircrack(Dependency):
             status = '\r{+} {C}Cracking WPA Handshake: %0.2f%%{W}' % percent
             status += ' ETA: {C}%s{W}' % eta_str
             status += ' @ {C}%0.1fkps{W}' % num_kps
-            #status += ' ({C}%d{W}/{C}%d{W} keys)' % (num_tried, num_total)
+            # status += ' ({C}%d{W}/{C}%d{W} keys)' % (num_tried, num_total)
             status += ' (current key: {C}%s{W})' % current_key
             Color.clear_entire_line()
             Color.p(status)
@@ -156,7 +155,7 @@ if __name__ == '__main__':
     Configuration.initialize(False)
 
     ivs_file = 'tests/files/wep-crackable.ivs'
-    print('Running aircrack on %s ...' % ivs_file)
+    print(('Running aircrack on %s ...' % ivs_file))
 
     aircrack = Aircrack(ivs_file)
     while aircrack.is_running():
@@ -166,7 +165,7 @@ if __name__ == '__main__':
     print('aircrack process completed.')
 
     (hexkey, asciikey) = aircrack.get_key_hex_ascii()
-    print('aircrack found HEX key: (%s) and ASCII key: (%s)' % (hexkey, asciikey))
+    print(('aircrack found HEX key: (%s) and ASCII key: (%s)' % (hexkey, asciikey)))
     assert hexkey == '75:6E:63:6C:65', 'hexkey was "%s", expected "75:6E:63:6C:65"' % hexkey
     assert asciikey == 'uncle', 'asciikey was "%s", expected "uncle"' % asciikey
 

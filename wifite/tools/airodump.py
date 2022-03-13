@@ -9,7 +9,9 @@ from ..config import Configuration
 from ..model.target import Target, WPSState
 from ..model.client import Client
 
-import os, time
+import os
+import time
+
 
 class Airodump(Dependency):
     ''' Wrapper around airodump-ng program '''
@@ -17,9 +19,9 @@ class Airodump(Dependency):
     dependency_name = 'airodump-ng'
     dependency_url = 'https://www.aircrack-ng.org/install.html'
 
-    def __init__(self, interface=None, channel=None, encryption=None,\
+    def __init__(self, interface=None, channel=None, encryption=None,
                        wps=WPSState.UNKNOWN, target_bssid=None,
-                       output_file_prefix='airodump',\
+                       output_file_prefix='airodump',
                        ivs_only=False, skip_wps=False, delete_existing_files=True):
         '''Sets up airodump arguments, doesn't start process yet.'''
 
@@ -36,6 +38,8 @@ class Airodump(Dependency):
         if channel is None:
             channel = Configuration.target_channel
         self.channel = channel
+        self.all_bands = Configuration.all_bands
+        self.two_ghz = Configuration.two_ghz
         self.five_ghz = Configuration.five_ghz
 
         self.encryption = encryption
@@ -48,11 +52,9 @@ class Airodump(Dependency):
 
         # For tracking decloaked APs (previously were hidden)
         self.decloaking = False
-        self.decloaked_bssids = set()
-        self.decloaked_times = {} # Map of BSSID(str) -> epoch(int) of last deauth
+        self.decloaked_times = {}  # Map of BSSID(str) -> epoch(int) of last deauth
 
         self.delete_existing_files = delete_existing_files
-
 
     def __enter__(self):
         '''
@@ -69,11 +71,13 @@ class Airodump(Dependency):
         command = [
             'airodump-ng',
             self.interface,
-            '-a', # Only show associated clients
-            '-w', self.csv_file_prefix, # Output file prefix
-            '--write-interval', '1' # Write every second
+            '-a',  # Only show associated clients
+            '-w', self.csv_file_prefix,  # Output file prefix
+            '--write-interval', '1'  # Write every second
         ]
         if self.channel:    command.extend(['-c', str(self.channel)])
+        elif self.all_bands: command.extend(['--band', 'abg'])
+        elif self.two_ghz: command.extend(['--band', 'bg'])
         elif self.five_ghz: command.extend(['--band', 'a'])
 
         if self.encryption:   command.extend(['--enc', self.encryption])
@@ -83,10 +87,12 @@ class Airodump(Dependency):
         if self.ivs_only: command.extend(['--output-format', 'ivs,csv'])
         else:             command.extend(['--output-format', 'pcap,csv'])
 
+        # Store value for debugging
+        self.command = command
+
         # Start the process
         self.pid = Process(command, devnull=True)
         return self
-
 
     def __exit__(self, type, value, traceback):
         '''
@@ -98,7 +104,6 @@ class Airodump(Dependency):
 
         if self.delete_existing_files:
             self.delete_airodump_temp_files(self.output_file_prefix)
-
 
     def find_files(self, endswith=None):
         return self.find_files_by_output_prefix(self.output_file_prefix, endswith=endswith)
@@ -138,7 +143,7 @@ class Airodump(Dependency):
             if fil.startswith('replay_') and fil.endswith('.cap') or fil.endswith('.xor'):
                 os.remove(os.path.join(temp_dir, fil))
 
-    def get_targets(self, old_targets=[], apply_filter=True):
+    def get_targets(self, old_targets=[], apply_filter=True, target_archives={}):
         ''' Parses airodump's CSV file, returns list of Targets '''
 
         # Find the .CSV file
@@ -150,44 +155,48 @@ class Airodump(Dependency):
         if csv_filename is None or not os.path.exists(csv_filename):
             return self.targets  # No file found
 
-        targets = Airodump.get_targets_from_csv(csv_filename)
-        for old_target in old_targets:
-            for target in targets:
-                if old_target.bssid == target.bssid:
-                    target.wps = old_target.wps
+        new_targets = Airodump.get_targets_from_csv(csv_filename)
+
+        # Check if one of the targets is also contained in the old_targets
+        for new_target in new_targets:
+            just_found = True
+            for old_target in old_targets:
+                # If the new_target is found in old_target copy attributes from old target
+                if old_target == new_target:
+                    # Identify decloaked targets
+                    if new_target.essid_known and not old_target.essid_known:
+                        # We decloaked a target!
+                        new_target.decloaked = True
+
+                    old_target.transfer_info(new_target)
+                    just_found = False
+                    break
+
+            # If the new_target is not in old_targets, check target_archives
+            # and copy attributes from there
+            if just_found and new_target.bssid in target_archives:
+                target_archives[new_target.bssid].transfer_info(new_target)
 
         # Check targets for WPS
         if not self.skip_wps:
             capfile = csv_filename[:-3] + 'cap'
             try:
-                Tshark.check_for_wps_and_update_targets(capfile, targets)
+                Tshark.check_for_wps_and_update_targets(capfile, new_targets)
             except ValueError:
                 # No tshark, or it failed. Fall-back to wash
-                Wash.check_for_wps_and_update_targets(capfile, targets)
+                Wash.check_for_wps_and_update_targets(capfile, new_targets)
 
         if apply_filter:
-            # Filter targets based on encryption & WPS capability
-            targets = Airodump.filter_targets(targets, skip_wps=self.skip_wps)
+            # Filter targets based on encryption, WPS capability & power
+            new_targets = Airodump.filter_targets(new_targets, skip_wps=self.skip_wps)
 
         # Sort by power
-        targets.sort(key=lambda x: x.power, reverse=True)
+        new_targets.sort(key=lambda x: x.power, reverse=True)
 
-        # Identify decloaked targets
-        for old_target in self.targets:
-            for new_target in targets:
-                if old_target.bssid != new_target.bssid:
-                    continue
-
-                if new_target.essid_known and not old_target.essid_known:
-                    # We decloaked a target!
-                    new_target.decloaked = True
-                    self.decloaked_bssids.add(new_target.bssid)
-
-        self.targets = targets
+        self.targets = new_targets
         self.deauth_hidden_targets()
 
         return self.targets
-
 
     @staticmethod
     def get_targets_from_csv(csv_filename):
@@ -209,7 +218,8 @@ class Airodump(Dependency):
             for row in csv_reader:
                 # Each 'row' is a list of fields for a target/client
 
-                if len(row) == 0: continue
+                if len(row) == 0:
+                    continue
 
                 if row[0].strip() == 'BSSID':
                     # This is the 'header' for the list of Targets
@@ -255,12 +265,18 @@ class Airodump(Dependency):
         result = []
         # Filter based on Encryption
         for target in targets:
+            # Filter targets if --power
+            # TODO Filter a target based on the current power - not on the max power
+            # as soon as losing targets in a single scan does not cause excessive output
+            if Configuration.min_power > 0 and target.max_power < Configuration.min_power:
+                continue
+
             if Configuration.clients_only and len(target.clients) == 0:
                 continue
             if 'WEP' in Configuration.encryption_filter and 'WEP' in target.encryption:
                 result.append(target)
             elif 'WPA' in Configuration.encryption_filter and 'WPA' in target.encryption:
-                    result.append(target)
+                result.append(target)
             elif 'WPS' in Configuration.encryption_filter and target.wps in [WPSState.UNLOCKED, WPSState.LOCKED]:
                 result.append(target)
             elif skip_wps:
@@ -271,11 +287,17 @@ class Airodump(Dependency):
         essid = Configuration.target_essid
         i = 0
         while i < len(result):
-            if result[i].essid is not None and Configuration.ignore_essid is not None and Configuration.ignore_essid.lower() in result[i].essid.lower():
+            if result[i].essid is None:
+                result.pop(i)
+            elif Configuration.ignore_essids is not None and\
+                    result[i].essid in Configuration.ignore_essids:
+                result.pop(i)
+            elif Configuration.ignore_cracked and\
+                    result[i].bssid in Configuration.ignore_cracked:
                 result.pop(i)
             elif bssid and result[i].bssid.lower() != bssid.lower():
                 result.pop(i)
-            elif essid and result[i].essid and result[i].essid.lower() != essid.lower():
+            elif essid and result[i].essid and result[i].essid != essid:
                 result.pop(i)
             else:
                 i += 1
@@ -297,8 +319,8 @@ class Airodump(Dependency):
         # Reusable deauth command
         deauth_cmd = [
             'aireplay-ng',
-            '-0', # Deauthentication
-            str(Configuration.num_deauths), # Number of deauth packets to send
+            '-0',  # Deauthentication
+            str(Configuration.num_deauths),  # Number of deauth packets to send
             '--ignore-negative-one'
         ]
 
@@ -325,6 +347,7 @@ class Airodump(Dependency):
             # Deauth clients
             for client in target.clients:
                 Process(deauth_cmd + ['-a', target.bssid, '-c', client.bssid, iface])
+
 
 if __name__ == '__main__':
     ''' Example usage. wlan0mon should be in Monitor Mode '''

