@@ -63,12 +63,10 @@ Run w1fit3kAl1
 
 ## Need to install:
 
+```bash
 0. bully: 
-```bash
 apt install bully
-```
 
-```bash
 1. hcxdumptool:
 apt install hcxdumptool
 
