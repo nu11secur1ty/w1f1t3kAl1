@@ -1,7 +1,12 @@
+### RELEASES!
+----------------------------------------------------------------------------------------------------------
 w1f1t3kAl1 2023.x from [wifite2](https://github.com/kimocoder/wifite2) source - supported by nu11secur1ty
+w1f1t3kAl1 2024.x from [wifite2](https://github.com/kimocoder/wifite2) source - supported by nu11secur1ty
 
-- - Support all Kali Linux versions after 2022
-+ Kali Linux Purple
+- - Support all Kali Linux versions after 2022, 2023, 2024 - soon
++ Kali Linux Purple : 2024 +
+
+----------------------------------------------------------------------------------------------------------
 
 [![](https://github.com/nu11secur1ty/w1f1t3kAl1/blob/master/logo/wifite-logo.png)](https://www.kali.org/tools/wifite/)
 
