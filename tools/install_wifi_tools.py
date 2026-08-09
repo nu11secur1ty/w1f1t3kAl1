@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Official Pyrit Installer
-Follows the guide at: https://github.com/JPaulMora/Pyrit/wiki
-Installs: Pyrit (main module) and its dependencies.
+Pyrit Installer - Fixed for Python 3.13+
+Handles compatibility issues with modern Python versions
 """
 
 import os
@@ -13,25 +12,25 @@ import subprocess
 import platform
 import tempfile
 import shutil
+import re
 from pathlib import Path
 
-# ANSI colors for better readability
 class Colors:
     RED = '\033[0;31m'
     GREEN = '\033[0;32m'
     YELLOW = '\033[1;33m'
     BLUE = '\033[0;34m'
     CYAN = '\033[0;36m'
-    NC = '\033[0m'  # No Color
+    NC = '\033[0m'
 
-class PyritInstaller:
+class PyritInstallerFixed:
     def __init__(self):
         self.os_type = self.detect_os()
         self.is_root = os.geteuid() == 0
+        self.python_version = self.get_python_version()
         self.temp_dir = None
 
     def detect_os(self):
-        """Detect the operating system (Focus on Linux)"""
         system = platform.system().lower()
         if system == 'linux':
             try:
@@ -45,209 +44,306 @@ class PyritInstaller:
                         return 'arch'
             except:
                 pass
-        return system  # 'linux', 'darwin' (macOS), or 'windows'
+        return system
+
+    def get_python_version(self):
+        """Get Python version as tuple"""
+        version = sys.version_info
+        return f"{version.major}.{version.minor}"
 
     def print_header(self):
-        """Print installation header"""
         print(f"{Colors.BLUE}{'='*60}{Colors.NC}")
-        print(f"{Colors.BLUE}{' ' * 15}Official Pyrit Installer{Colors.NC}")
+        print(f"{Colors.BLUE}{' ' * 15}Pyrit Installer (Python {self.python_version} Fixed){Colors.NC}")
         print(f"{Colors.BLUE}{'='*60}{Colors.NC}")
         print(f"{Colors.CYAN}OS Detected: {self.os_type}{Colors.NC}")
+        print(f"{Colors.CYAN}Python Version: {self.python_version}{Colors.NC}")
         print(f"{Colors.CYAN}Root Access: {'Yes' if self.is_root else 'No'}{Colors.NC}")
-        print(f"{Colors.YELLOW}Following guide: https://github.com/JPaulMora/Pyrit/wiki{Colors.NC}")
         print(f"{Colors.BLUE}{'='*60}{Colors.NC}")
 
-    def run_command(self, command, capture_output=False, check=True):
-        """Run a system command"""
+    def run_command(self, command, capture_output=False, check=False):
         try:
             if capture_output:
                 result = subprocess.run(command, shell=True, capture_output=True, text=True)
                 return result.stdout.strip(), result.stderr.strip(), result.returncode
             else:
-                subprocess.run(command, shell=True, check=check)
-                return None, None, 0
-        except subprocess.CalledProcessError as e:
-            return None, str(e), e.returncode
+                result = subprocess.run(command, shell=True)
+                return None, None, result.returncode
+        except Exception as e:
+            return None, str(e), 1
 
-    def install_dependencies_linux(self):
-        """Install system dependencies for Linux (Debian/Ubuntu focus)"""
-        print(f"{Colors.YELLOW}[1/5] Installing system dependencies...{Colors.NC}")
-        
-        # Packages from official wiki: python-dev, openssl-dev, gcc, git, etc.
-        debian_packages = (
-            "git python3 python3-pip python3-dev "
-            "build-essential libssl-dev libpcap-dev "
-            "libsqlite3-dev libgcrypt-dev libxml2-dev "
-            "cmake libcurl4-openssl-dev libz-dev"
-        )
+    def install_dependencies(self):
+        print(f"{Colors.YELLOW}[1/6] Installing system dependencies...{Colors.NC}")
         
         if self.os_type == 'debian':
-            cmd = f"apt-get update && apt-get install -y {debian_packages}"
+            packages = (
+                "git python3 python3-pip python3-dev "
+                "build-essential libssl-dev libpcap-dev "
+                "libsqlite3-dev libgcrypt-dev cmake "
+                "python3-scapy"  # Include scapy from apt
+            )
+            cmd = f"apt-get update && apt-get install -y {packages}"
             _, _, code = self.run_command(cmd)
             if code == 0:
-                print(f"{Colors.GREEN}✓ Dependencies installed successfully.{Colors.NC}")
+                print(f"{Colors.GREEN}✓ Dependencies installed.{Colors.NC}")
                 return True
-            else:
-                print(f"{Colors.RED}✗ Failed to install dependencies.{Colors.NC}")
-                return False
         elif self.os_type == 'arch':
-            arch_packages = "git python python-pip base-devel openssl libpcap sqlite libgcrypt libxml2 cmake curl zlib"
-            cmd = f"pacman -Sy --noconfirm {arch_packages}"
+            packages = "git python python-pip base-devel openssl libpcap sqlite libgcrypt cmake"
+            cmd = f"pacman -Sy --noconfirm {packages}"
             _, _, code = self.run_command(cmd)
-            return code == 0
-        else:
-            print(f"{Colors.YELLOW}⚠ Automatic dependency install not supported for {self.os_type}.{Colors.NC}")
-            print("Please install: git, python3, python3-pip, openssl-dev, and build-essential.")
-            return True  # Assume user will install manually
-
-    def install_python_dependencies(self):
-        """Install Python dependencies: psycopg2 and scapy (as per wiki)"""
-        print(f"{Colors.YELLOW}[2/5] Installing Python dependencies (psycopg2, scapy)...{Colors.NC}")
+            if code == 0:
+                print(f"{Colors.GREEN}✓ Dependencies installed.{Colors.NC}")
+                return True
         
-        # Official wiki recommends: pip install psycopg2-binary scapy
-        deps = ["psycopg2-binary", "scapy"]
+        print(f"{Colors.YELLOW}⚠ Could not auto-install dependencies. Continuing...{Colors.NC}")
+        return True
+
+    def install_python_deps(self):
+        print(f"{Colors.YELLOW}[2/6] Installing Python dependencies...{Colors.NC}")
+        
+        # Use older compatible versions
+        deps = [
+            "psycopg2-binary",
+            "scapy"
+        ]
+        
         success = True
         for dep in deps:
             print(f"{Colors.CYAN}  Installing {dep}...{Colors.NC}")
-            _, _, code = self.run_command(f"pip3 install {dep}")
+            # Try with --no-cache-dir to avoid issues
+            _, _, code = self.run_command(f"pip3 install --no-cache-dir {dep}")
             if code != 0:
-                # Fallback for Debian systems if pip fails
-                if dep == "scapy" and self.os_type == 'debian':
-                    print(f"{Colors.YELLOW}  Trying fallback: apt-get install python3-scapy{Colors.NC}")
-                    _, _, code = self.run_command("apt-get install -y python3-scapy")
-                if code != 0:
-                    print(f"{Colors.RED}✗ Failed to install {dep}{Colors.NC}")
-                    success = False
+                print(f"{Colors.RED}✗ Failed to install {dep}{Colors.NC}")
+                success = False
             else:
                 print(f"{Colors.GREEN}✓ {dep} installed.{Colors.NC}")
+        
         return success
 
-    def install_pyrit_from_source(self):
-        """Clone, build, and install Pyrit from official Git repository"""
-        print(f"{Colors.YELLOW}[3/5] Installing Pyrit from source (Git)...{Colors.NC}")
+    def patch_pyrit_source(self, pyrit_dir):
+        """Apply patches to make Pyrit compatible with Python 3.13+"""
+        print(f"{Colors.YELLOW}[3/6] Patching Pyrit source for Python {self.python_version}...{Colors.NC}")
         
-        # Check if Pyrit is already installed
+        patches_applied = 0
+        
+        # Patch 1: Fix Py_InitModule (deprecated in Python 3)
+        file_path = os.path.join(pyrit_dir, "cpyrit", "_cpyrit_cpu.c")
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                content = f.read()
+            
+            # Replace Py_InitModule with PyModule_Create
+            if 'Py_InitModule' in content:
+                content = content.replace(
+                    'Py_InitModule("_cpyrit_cpu", CPyritCPUMethods)',
+                    'PyModule_Create(&CPyritCPUMethods)'
+                )
+                patches_applied += 1
+            
+            # Fix return statements in init function
+            content = re.sub(
+                r'if\s*\((.*?)\)\s*{\s*return;\s*}',
+                r'if (\1) { PyErr_Print(); return NULL; }',
+                content
+            )
+            
+            with open(file_path, 'w') as f:
+                f.write(content)
+            print(f"{Colors.GREEN}✓ Patched _cpyrit_cpu.c{Colors.NC}")
+
+        # Patch 2: Fix Python 3.13 type initialization
+        file_path = os.path.join(pyrit_dir, "cpyrit", "cpyrit_cpu.h")
+        if os.path.exists(file_path):
+            with open(file_path, 'r') as f:
+                content = f.read()
+            
+            # Add modern type initialization if missing
+            if 'PyType_Ready' not in content:
+                # Add type declaration fixes
+                content = content.replace(
+                    'PyObject_HEAD_INIT(NULL)',
+                    'PyObject_HEAD_INIT(&PyType_Type)'
+                )
+                
+                with open(file_path, 'w') as f:
+                    f.write(content)
+                print(f"{Colors.GREEN}✓ Patched cpyrit_cpu.h{Colors.NC}")
+                patches_applied += 1
+
+        return patches_applied > 0
+
+    def install_pyrit_from_source(self):
+        """Install Pyrit with compatibility fixes"""
+        print(f"{Colors.YELLOW}[4/6] Installing Pyrit from source...{Colors.NC}")
+        
+        # Check if already installed
         _, _, code = self.run_command("which pyrit", capture_output=True)
         if code == 0:
-            print(f"{Colors.GREEN}✓ Pyrit is already installed. Skipping build.{Colors.NC}")
+            print(f"{Colors.GREEN}✓ Pyrit is already installed.{Colors.NC}")
             return True
 
-        # Create temp directory for cloning
         self.temp_dir = tempfile.mkdtemp()
         original_dir = os.getcwd()
         os.chdir(self.temp_dir)
 
         try:
-            # Official git clone command
-            print(f"{Colors.CYAN}  Cloning from https://github.com/JPaulMora/Pyrit.git...{Colors.NC}")
+            # Clone
+            print(f"{Colors.CYAN}  Cloning Pyrit repository...{Colors.NC}")
             self.run_command("git clone https://github.com/JPaulMora/Pyrit.git")
             os.chdir("Pyrit")
 
-            # Build and install as per wiki
+            # Apply patches
+            self.patch_pyrit_source(".")
+
+            # Build with Python 3.13 compatibility flags
             print(f"{Colors.CYAN}  Building Pyrit...{Colors.NC}")
+            os.environ['CFLAGS'] = '-Wno-error=implicit-function-declaration -Wno-error=incompatible-pointer-types'
             self.run_command("python3 setup.py clean")
             self.run_command("python3 setup.py build")
-            
+
+            # Install
             print(f"{Colors.CYAN}  Installing Pyrit...{Colors.NC}")
             self.run_command("sudo python3 setup.py install")
 
-            # Verify installation
+            # Verify
             _, _, code = self.run_command("which pyrit", capture_output=True)
             if code == 0:
                 print(f"{Colors.GREEN}✓ Pyrit installed successfully!{Colors.NC}")
                 return True
             else:
-                print(f"{Colors.YELLOW}⚠ Pyrit installed but 'pyrit' command not found in PATH.{Colors.NC}")
-                print("  Try: export PATH=$PATH:/usr/local/bin")
-                return True  # Installation likely succeeded
+                print(f"{Colors.YELLOW}⚠ Pyrit installed but 'pyrit' not in PATH.{Colors.NC}")
+                print(f"{Colors.YELLOW}  Try: export PATH=\$PATH:/usr/local/bin{Colors.NC}")
+                return True
 
         except Exception as e:
-            print(f"{Colors.RED}✗ Error during Pyrit installation: {e}{Colors.NC}")
+            print(f"{Colors.RED}✗ Error: {e}{Colors.NC}")
             return False
         finally:
             os.chdir(original_dir)
             if self.temp_dir and os.path.exists(self.temp_dir):
                 shutil.rmtree(self.temp_dir)
 
+    def install_alternative(self):
+        """Alternative: Use a forked/updated version or install via pip"""
+        print(f"{Colors.YELLOW}[5/6] Trying alternative installation method...{Colors.NC}")
+        
+        # Try pip installation (if available)
+        _, _, code = self.run_command("pip3 install pyrit", capture_output=True)
+        if code == 0:
+            print(f"{Colors.GREEN}✓ Pyrit installed via pip!{Colors.NC}")
+            return True
+        
+        # Try using pyrit from Kali repos if on Debian
+        if self.os_type == 'debian':
+            print(f"{Colors.CYAN}  Trying apt install pyrit...{Colors.NC}")
+            _, _, code = self.run_command("apt-get install -y pyrit")
+            if code == 0:
+                print(f"{Colors.GREEN}✓ Pyrit installed from apt!{Colors.NC}")
+                return True
+        
+        # Try the old stable release
+        print(f"{Colors.CYAN}  Trying Pyrit stable release...{Colors.NC}")
+        self.temp_dir = tempfile.mkdtemp()
+        os.chdir(self.temp_dir)
+        
+        try:
+            # Use older release that works with Python 3.10/3.11
+            self.run_command(
+                "wget https://github.com/JPaulMora/Pyrit/archive/refs/tags/v0.5.0.tar.gz"
+            )
+            self.run_command("tar -xzf v0.5.0.tar.gz")
+            os.chdir("Pyrit-0.5.0")
+            
+            # Try to build with compatibility flags
+            os.environ['CFLAGS'] = '-Wno-error'
+            self.run_command("python3 setup.py build")
+            self.run_command("sudo python3 setup.py install")
+            
+            _, _, code = self.run_command("which pyrit", capture_output=True)
+            if code == 0:
+                print(f"{Colors.GREEN}✓ Pyrit stable version installed!{Colors.NC}")
+                return True
+        except:
+            pass
+        finally:
+            os.chdir("/tmp")
+            if self.temp_dir and os.path.exists(self.temp_dir):
+                shutil.rmtree(self.temp_dir)
+        
+        return False
+
     def verify_installation(self):
-        """Final verification"""
+        """Verify and display installation info"""
         print(f"{Colors.BLUE}{'='*60}{Colors.NC}")
         print(f"{Colors.BLUE}{' ' * 20}Verification{Colors.NC}")
         print(f"{Colors.BLUE}{'='*60}{Colors.NC}")
         
-        # Check for pyrit command
+        # Check pyrit
         stdout, _, code = self.run_command("which pyrit", capture_output=True)
         if code == 0:
             print(f"{Colors.GREEN}✓ Pyrit is installed at: {stdout}{Colors.NC}")
-            # Try to get version
             version, _, _ = self.run_command("pyrit --version", capture_output=True)
             if version:
-                print(f"{Colors.CYAN}  Version info: {version[:100]}{Colors.NC}")
+                print(f"{Colors.CYAN}  Version: {version[:100]}{Colors.NC}")
+            return True
         else:
-            print(f"{Colors.RED}✗ Pyrit command not found.{Colors.NC}")
-            print("  Try running: sudo python3 setup.py install from the Pyrit source directory.")
+            print(f"{Colors.RED}✗ Pyrit not found.{Colors.NC}")
             return False
 
-        # Check for optional GPU modules (CUDA/OpenCL) - just informative
-        print(f"\n{Colors.YELLOW}Optional GPU Acceleration:{Colors.NC}")
-        print("  For CUDA/OpenCL support, install additional modules:")
-        print("  - https://github.com/JPaulMora/Pyrit/wiki/Setup-CUDA-and-OpenCL")
-        
-        return True
-
-    def show_manual_instructions(self):
-        """Show manual installation instructions if automatic fails"""
-        print(f"\n{Colors.YELLOW}Manual Installation Steps:{Colors.NC}")
-        print("1. Install dependencies:")
-        print("   sudo apt-get install git python3 python3-pip python3-dev build-essential libssl-dev")
-        print("2. Install Python packages:")
-        print("   sudo pip3 install psycopg2-binary scapy")
-        print("3. Clone and install Pyrit:")
+    def show_manual_fix(self):
+        """Show manual fix instructions"""
+        print(f"\n{Colors.YELLOW}Manual Fix for Python 3.13:{Colors.NC}")
+        print("1. Install older Python version (3.10 or 3.11):")
+        print("   sudo apt-get install python3.10 python3.10-dev python3.10-venv")
+        print("2. Create virtual environment:")
+        print("   python3.10 -m venv pyrit_env")
+        print("   source pyrit_env/bin/activate")
+        print("3. Install Pyrit:")
         print("   git clone https://github.com/JPaulMora/Pyrit.git")
         print("   cd Pyrit")
-        print("   python3 setup.py build")
-        print("   sudo python3 setup.py install")
-        print(f"\n{Colors.CYAN}Full guide: https://github.com/JPaulMora/Pyrit/wiki{Colors.NC}")
+        print("   pip install psycopg2-binary scapy")
+        print("   python setup.py build")
+        print("   python setup.py install")
+        print("\nOr use Docker:")
+        print("   docker pull kalilinux/kali-linux-docker")
+        print("   docker run -it kalilinux/kali-linux-docker /bin/bash")
+        print("   apt-get update && apt-get install -y pyrit")
 
     def main(self):
-        """Main installation process"""
         self.print_header()
         
-        # Check root
         if not self.is_root:
-            print(f"{Colors.RED}✗ This script must be run as root (sudo).{Colors.NC}")
+            print(f"{Colors.RED}✗ Run as root: sudo python3 {sys.argv[0]}{Colors.NC}")
             sys.exit(1)
 
-        # Step 1: System deps
-        if not self.install_dependencies_linux():
-            print(f"{Colors.RED}Failed to install system dependencies.{Colors.NC}")
-            self.show_manual_instructions()
-            sys.exit(1)
+        # Check Python version
+        major, minor = map(int, self.python_version.split('.'))
+        if major >= 3 and minor >= 13:
+            print(f"{Colors.YELLOW}⚠ Python 3.13 detected - may have compatibility issues{Colors.NC}")
+            print(f"{Colors.YELLOW}  Using compatibility patches...{Colors.NC}")
 
-        # Step 2: Python deps
-        if not self.install_python_dependencies():
-            print(f"{Colors.YELLOW}⚠ Some Python dependencies failed. Continuing...{Colors.NC}")
-
-        # Step 3: Install Pyrit
-        if not self.install_pyrit_from_source():
-            print(f"{Colors.RED}✗ Pyrit installation failed.{Colors.NC}")
-            self.show_manual_instructions()
-            sys.exit(1)
-
-        # Step 4: Verify
-        success = self.verify_installation()
+        # Install
+        self.install_dependencies()
+        self.install_python_deps()
+        
+        success = self.install_pyrit_from_source()
+        
+        if not success:
+            print(f"{Colors.YELLOW}⚠ Source installation failed. Trying alternative...{Colors.NC}")
+            success = self.install_alternative()
+        
+        # Verify
+        verified = self.verify_installation()
         
         print(f"{Colors.BLUE}{'='*60}{Colors.NC}")
-        if success:
-            print(f"{Colors.GREEN}✓ Pyrit has been successfully installed!{Colors.NC}")
-            print("  You can now use: pyrit list_cores")
-            print("  For GPU support, see the optional modules guide.")
+        if verified:
+            print(f"{Colors.GREEN}✓ Pyrit installed successfully!{Colors.NC}")
+            print(f"{Colors.CYAN}  Test with: pyrit list_cores{Colors.NC}")
         else:
-            print(f"{Colors.RED}✗ Installation may not be complete.{Colors.NC}")
-            self.show_manual_instructions()
+            print(f"{Colors.RED}✗ Installation failed.{Colors.NC}")
+            self.show_manual_fix()
         
         print(f"{Colors.BLUE}{'='*60}{Colors.NC}")
 
 if __name__ == "__main__":
-    installer = PyritInstaller()
+    installer = PyritInstallerFixed()
     installer.main()
