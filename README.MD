@@ -82,8 +82,6 @@ apt install hcxdumptool
 
 2. hcxpcaptool:
 apt install hcxtools
-
-3. https://github.com/nu11secur1ty/pyrit-installer
 ```
 ```bash
 git clone https://github.com/nu11secur1ty/w1f1tEkal1.git
