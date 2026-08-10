@@ -1274,16 +1274,25 @@ class Wifite:
             Color.pl('{+} Use {C}--resume{W} to continue this session')
 
     # ================================================================
-    # НОВ МЕТОД - САМО 6 РЕДА!
+    # НОВ МЕТОД ЗА РЕСЕТВАНЕ С ПРИНТ СЪОБЩЕНИЯ
     # ================================================================
     def reset_network(self):
-        """Reset network interface"""
+        """Reset network interface with visual feedback"""
         import subprocess, time
         iface = Configuration.interface
         if iface:
+            Color.pl('')
+            Color.pl('{+} {C}Resetting network interface: {G}%s{W}' % iface)
+            Color.pl('{+} {D}Taking {G}%s{D} down...{W}' % iface)
             subprocess.run(['ip', 'link', 'set', iface, 'down'])
             time.sleep(1)
+            Color.pl('{+} {D}Bringing {G}%s{D} up...{W}' % iface)
             subprocess.run(['ip', 'link', 'set', iface, 'up'])
+            time.sleep(1)
+            Color.pl('{+} {G}✓ {G}%s{G} reset successfully!{W}' % iface)
+            Color.pl('')
+        else:
+            Color.pl('{!} {O}No interface found to reset{W}')
     # ================================================================
 
 
@@ -1337,7 +1346,7 @@ def main():
         _signal.signal(_signal.SIGINT, emergency_exit)
 
         # ================================================================
-        # АВТОМАТИЧНО РЕСЕТВАНЕ - САМО 4 РЕДА!
+        # АВТОМАТИЧНО РЕСЕТВАНЕ С ПРИНТ СЪОБЩЕНИЯ
         # ================================================================
         if wifite_instance:
             wifite_instance.reset_network()
