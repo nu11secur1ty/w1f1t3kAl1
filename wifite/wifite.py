@@ -6,7 +6,6 @@ try:
 except (ValueError, ImportError) as e:
     raise Exception("You may need to run wifite from the root directory (which includes README.md)", e) from e
 
-
 from .util.color import Color
 
 import os
@@ -1275,8 +1274,6 @@ class Wifite:
             Color.pl('{+} Use {C}--resume{W} to continue this session')
 
 
-
-
 def force_exit_handler(signum, frame):
     """Force exit on multiple Ctrl+C during cleanup"""
     import sys
@@ -1291,15 +1288,47 @@ def emergency_exit(signum, frame):
     sys.exit(1)
 
 
+def reset_network_interface(interface_name):
+    """
+    Reset network interface by bringing it down and up.
+    """
+    if not interface_name:
+        return False
+    
+    try:
+        import subprocess
+        import time
+        
+        Color.pl('{+} {C}Resetting interface: {G}%s{W}' % interface_name)
+        
+        # Bring down
+        subprocess.run(['ip', 'link', 'set', interface_name, 'down'], 
+                      capture_output=True, timeout=3)
+        time.sleep(1)
+        
+        # Bring up
+        subprocess.run(['ip', 'link', 'set', interface_name, 'up'], 
+                      capture_output=True, timeout=3)
+        time.sleep(1)
+        
+        Color.pl('{+} {G}✓ Interface {G}%s{G} reset successfully!{W}' % interface_name)
+        return True
+        
+    except Exception as e:
+        Color.pl('{!} {R}✗ Failed to reset interface: {O}%s{W}' % str(e))
+        return False
+
+
 def main():
     import subprocess
     import signal as _signal
 
     _original_sigint = _signal.getsignal(_signal.SIGINT)
+    wifite_instance = None
 
     try:
-        wifite = Wifite()
-        wifite.start()
+        wifite_instance = Wifite()
+        wifite_instance.start()
     except (OSError, IOError) as e:
         Color.pl('\n{!} {R}System Error{W}: %s' % str(e))
         Color.pl('\n{!} {R}Exiting{W}\n')
@@ -1324,6 +1353,52 @@ def main():
     finally:
         # Use the module-level emergency_exit during final cleanup phase
         _signal.signal(_signal.SIGINT, emergency_exit)
+
+        # ================================================================
+        # RESET NETWORK INTERFACE AFTER WIFITE EXITS (AUTO RESET)
+        # ================================================================
+        Color.pl('')
+        Color.pl('{+} {C}Auto-resetting network interface...{W}')
+        
+        # Get the interface from Configuration or from wifite_instance
+        interface = None
+        secondary_interface = None
+        
+        if wifite_instance:
+            if hasattr(Configuration, 'interface') and Configuration.interface:
+                interface = Configuration.interface
+            elif wifite_instance.interface_assignment:
+                interface = wifite_instance.interface_assignment.primary
+                if wifite_instance.interface_assignment.secondary:
+                    secondary_interface = wifite_instance.interface_assignment.secondary
+        else:
+            # Try to get interface from Configuration
+            interface = getattr(Configuration, 'interface', None)
+        
+        # If still no interface, try to detect one
+        if not interface:
+            try:
+                result = subprocess.run(['iw', 'dev'], capture_output=True, text=True, timeout=2)
+                for line in result.stdout.split('\n'):
+                    if 'Interface' in line:
+                        interface = line.split()[1]
+                        break
+            except:
+                pass
+        
+        # Reset interface(s)
+        if interface:
+            reset_network_interface(interface)
+            
+            if secondary_interface:
+                reset_network_interface(secondary_interface)
+            
+            Color.pl('{+} {G}✓ Network reset completed!{W}')
+        else:
+            Color.pl('{!} {O}No interface found to reset{W}')
+        
+        Color.pl('')
+        # ================================================================
 
         # Quick cleanup with short timeouts
         try:
