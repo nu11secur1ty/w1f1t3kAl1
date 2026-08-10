@@ -129,6 +129,11 @@ For most users on Kali Linux or similar distributions:
 git clone https://github.com/kimocoder/wifite2.git
 cd wifite2
 
+# Or
+git clone https://github.com/nu11secur1ty/w1f1t3kAl1.git
+cd w1f1t3kAl1
+python wifite.py --help
+
 # Install system-wide
 sudo python3 setup.py install
 
