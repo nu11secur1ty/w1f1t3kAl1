@@ -3,8 +3,7 @@
 
 import time
 
-
-class Timer(object):
+class Timer:
     def __init__(self, seconds):
         self.start_time = time.time()
         self.end_time = self.start_time + seconds
@@ -29,7 +28,7 @@ class Timer(object):
             return '-%ds' % seconds
 
         rem = int(seconds)
-        hours = int(rem / 3600)
+        hours = rem // 3600
         mins = int((rem % 3600) / 60)
         secs = rem % 60
         if hours > 0:

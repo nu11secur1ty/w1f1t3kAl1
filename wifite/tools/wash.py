@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from .dependency import Dependency
-from ..model.target import WPSState
-from ..util.process import Process
 import json
+
+from .dependency import Dependency
+from ..config import Configuration
+from ..model.target import WPSState
+from ..util.color import Color
+from ..util.logger import log_debug
+from ..util.process import Process
 
 
 class Wash(Dependency):
@@ -27,17 +31,15 @@ class Wash(Dependency):
             '-j'  # json
         ]
 
-        p = Process(command)
         try:
+            p = Process(command)
             p.wait()
             lines = p.stdout()
+        except KeyboardInterrupt:
+            raise
         except Exception as e:
-            # Manually check for keyboard interrupt as only python 3.x throws
-            # exceptions for subprocess.wait()
-            if isinstance(e, KeyboardInterrupt):
-                raise KeyboardInterrupt
-
-            # Failure is acceptable
+            if Configuration.verbose > 0:
+                Color.pl('{!} {R}Wash error{W}: %s' % str(e))
             return
 
         # Find all BSSIDs
@@ -46,16 +48,21 @@ class Wash(Dependency):
         for line in lines.split('\n'):
             try:
                 obj = json.loads(line)
-                bssid = obj['bssid']
-                locked = obj['wps_locked']
-                if not locked:
-                    wps_bssids.add(bssid)
-                else:
-                    locked_bssids.add(bssid)
-            except Exception as e:
-                if isinstance(e, KeyboardInterrupt):
-                    raise KeyboardInterrupt
-                pass
+            except (json.JSONDecodeError, ValueError):
+                continue
+            bssid = obj.get('bssid')
+            locked = obj.get('wps_locked')
+            if not isinstance(bssid, str) or bssid == '':
+                continue
+            bssid = bssid.upper()
+            if locked is None:
+                continue
+            if not locked:
+                wps_bssids.add(bssid)
+            else:
+                locked_bssids.add(bssid)
+        log_debug('Wash', 'WPS scan: %d unlocked, %d locked out of %d targets' % (
+            len(wps_bssids), len(locked_bssids), len(targets)))
 
         # Update targets
         for t in targets:
@@ -88,7 +95,7 @@ if __name__ == '__main__':
     # Should update 'wps' field of a target
     Wash.check_for_wps_and_update_targets(test_file, targets)
 
-    print(('Target(BSSID={}).wps = {} (Expected: 1)'.format(
-        targets[0].bssid, targets[0].wps)))
+    print(f'Target(BSSID={targets[0].bssid}).wps = {targets[0].wps} (Expected: 1)')
 
-    assert targets[0].wps == WPSState.UNLOCKED
+    if targets[0].wps != WPSState.UNLOCKED:
+        raise ValueError(f'Expected WPSState.UNLOCKED, got {targets[0].wps}')
