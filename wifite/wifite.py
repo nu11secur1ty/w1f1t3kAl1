@@ -1273,6 +1273,19 @@ class Wifite:
             Color.pl('{+} {C}Session preserved for resume{W} ({O}%d{W} target(s) remaining)' % summary['remaining'])
             Color.pl('{+} Use {C}--resume{W} to continue this session')
 
+    # ================================================================
+    # НОВ МЕТОД - САМО 6 РЕДА!
+    # ================================================================
+    def reset_network(self):
+        """Reset network interface"""
+        import subprocess, time
+        iface = Configuration.interface
+        if iface:
+            subprocess.run(['ip', 'link', 'set', iface, 'down'])
+            time.sleep(1)
+            subprocess.run(['ip', 'link', 'set', iface, 'up'])
+    # ================================================================
+
 
 def force_exit_handler(signum, frame):
     """Force exit on multiple Ctrl+C during cleanup"""
@@ -1286,37 +1299,6 @@ def emergency_exit(signum, frame):
     import sys
     print('\n[!] Emergency exit!')
     sys.exit(1)
-
-
-def reset_network_interface(interface_name):
-    """
-    Reset network interface by bringing it down and up.
-    """
-    if not interface_name:
-        return False
-    
-    try:
-        import subprocess
-        import time
-        
-        Color.pl('{+} {C}Resetting interface: {G}%s{W}' % interface_name)
-        
-        # Bring down
-        subprocess.run(['ip', 'link', 'set', interface_name, 'down'], 
-                      capture_output=True, timeout=3)
-        time.sleep(1)
-        
-        # Bring up
-        subprocess.run(['ip', 'link', 'set', interface_name, 'up'], 
-                      capture_output=True, timeout=3)
-        time.sleep(1)
-        
-        Color.pl('{+} {G}✓ Interface {G}%s{G} reset successfully!{W}' % interface_name)
-        return True
-        
-    except Exception as e:
-        Color.pl('{!} {R}✗ Failed to reset interface: {O}%s{W}' % str(e))
-        return False
 
 
 def main():
@@ -1355,49 +1337,10 @@ def main():
         _signal.signal(_signal.SIGINT, emergency_exit)
 
         # ================================================================
-        # RESET NETWORK INTERFACE AFTER WIFITE EXITS (AUTO RESET)
+        # АВТОМАТИЧНО РЕСЕТВАНЕ - САМО 4 РЕДА!
         # ================================================================
-        Color.pl('')
-        Color.pl('{+} {C}Auto-resetting network interface...{W}')
-        
-        # Get the interface from Configuration or from wifite_instance
-        interface = None
-        secondary_interface = None
-        
         if wifite_instance:
-            if hasattr(Configuration, 'interface') and Configuration.interface:
-                interface = Configuration.interface
-            elif wifite_instance.interface_assignment:
-                interface = wifite_instance.interface_assignment.primary
-                if wifite_instance.interface_assignment.secondary:
-                    secondary_interface = wifite_instance.interface_assignment.secondary
-        else:
-            # Try to get interface from Configuration
-            interface = getattr(Configuration, 'interface', None)
-        
-        # If still no interface, try to detect one
-        if not interface:
-            try:
-                result = subprocess.run(['iw', 'dev'], capture_output=True, text=True, timeout=2)
-                for line in result.stdout.split('\n'):
-                    if 'Interface' in line:
-                        interface = line.split()[1]
-                        break
-            except:
-                pass
-        
-        # Reset interface(s)
-        if interface:
-            reset_network_interface(interface)
-            
-            if secondary_interface:
-                reset_network_interface(secondary_interface)
-            
-            Color.pl('{+} {G}✓ Network reset completed!{W}')
-        else:
-            Color.pl('{!} {O}No interface found to reset{W}')
-        
-        Color.pl('')
+            wifite_instance.reset_network()
         # ================================================================
 
         # Quick cleanup with short timeouts
