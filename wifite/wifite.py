@@ -975,6 +975,7 @@ class Wifite:
         Color.pl(r' {G}.´  ·  .{C}{D} · · {W}{G}.  ·  `.  {G}wifite2 {D}%s{W}' % Configuration.version)
         Color.pl(r' {G}:  :  : {C}{D}((·)){W}{G} :  :  :  {W}{D}a wireless auditor by {C}derv82{W}')
         Color.pl(r' {G}`.  ·  `{GR}{D} /│\ {W}{G}´  ·  .´  {W}{D}maintained by {C}kimocoder{W}')
+        Color.pl(r' {G}`.  ·  `{GR}{D} /│\ {W}{G}´  ·  .´  {W}{D}support by {C}nu11secur1ty{W}')
         Color.pl(r' {G}  `     {GR}{D}/─┴─\{W}{G}     ´    {C}{D}https://github.com/kimocoder/wifite2{W}')
         Color.pl('')
 
